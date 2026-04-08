@@ -21,4 +21,7 @@ fi
 echo "Running migrations..."
 php artisan migrate --force --no-interaction
 
+chown -R www-data:www-data /var/www/html/database
+chmod -R 775 /var/www/html/database
+
 exec "$@"
