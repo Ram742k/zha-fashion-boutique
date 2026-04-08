@@ -15,6 +15,7 @@ chown -R www-data:www-data storage bootstrap/cache
 if [ "$DB_CONNECTION" = "sqlite" ] && [ ! -f "$DB_DATABASE" ] && [[ "$DB_DATABASE" == *.sqlite ]]; then
     mkdir -p "$(dirname "$DB_DATABASE")"
     touch "$DB_DATABASE"
+    chown -R www-data:www-data "$(dirname "$DB_DATABASE")"
 fi
 
 echo "Running migrations..."
