@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Environment
+.env
+.env.local
+.env.production
+.env.*
+
+# Build
+dist/
+build/
+public/storage/
+public/products/
+public/branding/
+
+# System
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

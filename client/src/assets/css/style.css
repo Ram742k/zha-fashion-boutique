@@ -1,0 +1,214 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-gold: #B87333; /* The "ZHA" text color */
+  --color-brand-purple: #4B0082; /* The "FASHION STUDIO" text color */
+  --color-brand-rose: #FF8C9F; /* The flower background color */
+  --color-brand-navy: #1A1B4B; /* The flower outline color */
+  
+  --color-gold-light: #F4E0A1;
+  --color-gold: var(--color-brand-gold);
+  --color-gold-dark: #8B5A2B;
+  --color-beige-light: #FFF9F5;
+  --color-beige: #F5E6DA;
+  --color-beige-dark: #D4C4B7;
+  --color-luxury-dark: #2D004F;
+  --color-luxury-charcoal: #333333;
+
+  --bg-brand-gradient: linear-gradient(135deg, var(--color-brand-gold) 0%, var(--color-brand-purple) 100%);
+  --bg-rose-gradient: linear-gradient(135deg, var(--color-brand-rose) 0%, var(--color-brand-pink) 100%);
+  --bg-brand-soft-gradient: linear-gradient(135deg, #FFF9F5 0%, #F5E6DA 100%);
+
+  --font-playfair: "Playfair Display", serif;
+  --font-inter: "Inter", sans-serif;
+
+  --shadow-premium: 0 10px 30px -10px rgba(75, 0, 130, 0.2);
+  --shadow-gold: 0 10px 30px -10px rgba(184, 115, 51, 0.3);
+}
+
+
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-playfair);
+  }
+}
+
+@layer components {
+  .btn-gold {
+    background: var(--bg-brand-gradient);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    font-weight: 700;
+    transition: all 500ms cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: var(--shadow-gold);
+    border: none;
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-gold::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+      120deg,
+      transparent,
+      rgba(255, 255, 255, 0.3),
+      transparent
+    );
+    transition: all 600ms;
+  }
+  .btn-gold:hover::before {
+    left: 100%;
+  }
+  .btn-gold:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 35px -5px rgba(184, 115, 51, 0.4);
+    filter: brightness(1.1);
+  }
+  .btn-gold:disabled {
+    opacity: 0.5;
+  }
+
+  .btn-outline {
+    border: 1px solid var(--color-gold);
+    color: var(--color-gold);
+    padding: 0.75rem 1.5rem;
+    border-radius: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    transition: all 300ms;
+  }
+  .btn-outline:hover {
+    background-color: var(--color-gold);
+    color: white;
+  }
+
+  .card-premium {
+    background-color: white;
+    border: 1px solid var(--color-beige);
+    padding: 1.5rem;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    transition: all 300ms;
+  }
+  .card-premium:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
+
+  .input-field {
+    width: 100%;
+    border: 1px solid #e5e7eb;
+    padding: 0.75rem 1rem;
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+    transition: all 300ms;
+  }
+  .input-field:focus {
+    border-color: var(--color-gold-light);
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #D4AF37;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #B8860B;
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Glassmorphism */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.glass-dark {
+  background: rgba(26, 27, 75, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Text Shimmer Effect */
+.text-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(184, 115, 51, 1) 0%,
+    rgba(244, 224, 161, 1) 50%,
+    rgba(184, 115, 51, 1) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: 0% center; }
+  100% { background-position: -200% center; }
+}
+
+/* Reveal Animations */
+.reveal {
+  opacity: 0;
+  transition: all 1s ease-out;
+}
+
+.reveal.active {
+  opacity: 1;
+}
+
+.reveal-up {
+  transform: translateY(50px);
+}
+
+.reveal-up.active {
+  transform: translateY(0);
+}
+
+.reveal-left {
+  transform: translateX(-50px);
+}
+
+.reveal-left.active {
+  transform: translateX(0);
+}
+
+.reveal-right {
+  transform: translateX(50px);
+}
+
+.reveal-right.active {
+  transform: translateX(0);
+}
+
+/* Hover Stacking */
+.hover-stack {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-stack:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: var(--shadow-premium);
+}
