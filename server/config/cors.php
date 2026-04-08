@@ -1,17 +1,6 @@
 <?php
 
 return [
-<<<<<<< HEAD
-      'paths' => ['api/*', 'sanctum/csrf-cookie'],
-      'allowed_methods' => ['*'],
-      'allowed_origins' => ['https://zha-fashion-studio.vercel.app'],
-      'allowed_origins_patterns' => [],
-      'allowed_headers' => ['*'],
-      'exposed_headers' => [],
-      'max_age' => 0,
-      'supports_credentials' => true,
-  ];
-=======
 
     /*
     |--------------------------------------------------------------------------
@@ -43,4 +32,3 @@ return [
     'supports_credentials' => false,
 
 ];
->>>>>>> 894d052 (Final CORS and PostgreSQL support fixes)
