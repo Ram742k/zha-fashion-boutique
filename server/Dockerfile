@@ -9,8 +9,9 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
     libxml2-dev \
+    libpq-dev \
     zip \
-    && docker-php-ext-install pdo pdo_mysql zip mbstring gd
+    && docker-php-ext-install pdo pdo_mysql pdo_pgsql zip mbstring gd
 
 # Enable Apache modules
 RUN a2enmod rewrite

@@ -12,10 +12,12 @@ chmod -R 775 storage bootstrap/cache
 chown -R www-data:www-data storage bootstrap/cache
 
 # Run migrations if DB is connected
-if [ "$DB_CONNECTION" = "sqlite" ] && [ ! -f "$DB_DATABASE" ]; then
+if [ "$DB_CONNECTION" = "sqlite" ] && [ ! -f "$DB_DATABASE" ] && [[ "$DB_DATABASE" == *.sqlite ]]; then
+    mkdir -p "$(dirname "$DB_DATABASE")"
     touch "$DB_DATABASE"
 fi
 
-php artisan migrate --force
+echo "Running migrations..."
+php artisan migrate --force --no-interaction
 
 exec "$@"
