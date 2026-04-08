@@ -1,9 +1,8 @@
 {
-<<<<<<< HEAD
-    "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
-=======
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
->>>>>>> 894d052 (Final CORS and PostgreSQL support fixes)
 }
