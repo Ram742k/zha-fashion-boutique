@@ -71,7 +71,7 @@ import {
     X as XIcon
 } from 'lucide-vue-next'
 
-const API_BASE = 'http://localhost:8000/api/admin/embroidery'
+const API_BASE = 'https://zha-fashion-backend.onrender.com/api/admin/embroidery'
 
 const works = ref([])
 const loading = ref(true)

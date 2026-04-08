@@ -83,7 +83,7 @@ import {
     Loader as LoaderIcon
 } from 'lucide-vue-next'
 
-const API_BASE = 'http://localhost:8000/api/admin/orders'
+const API_BASE = 'https://zha-fashion-backend.onrender.com/api/admin/orders'
 
 const invoices = ref([])
 const loading = ref(true)

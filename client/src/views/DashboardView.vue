@@ -128,7 +128,7 @@ const orders = ref([
 ])
 
 const downloadInvoice = (orderId) => {
-    window.open(`http://localhost:8000/api/admin/orders/${orderId}/invoice`, '_blank')
+    window.open(`https://zha-fashion-backend.onrender.com/api/admin/orders/${orderId}/invoice`, '_blank')
 }
 </script>
 

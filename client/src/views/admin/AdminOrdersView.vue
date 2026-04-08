@@ -144,7 +144,7 @@ import {
     Download as DownloadIcon
 } from 'lucide-vue-next'
 
-const API_BASE = 'http://localhost:8000/api/admin'
+const API_BASE = 'https://zha-fashion-backend.onrender.com/api/admin'
 
 const orders = ref([])
 const loading = ref(true)
