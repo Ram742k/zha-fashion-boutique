@@ -6,6 +6,12 @@ const path = require('path');
 
 const app = express();
 
+// Global Debug Logger
+app.use((req, res, next) => {
+  console.log(`${req.method} ${req.url}`);
+  next();
+});
+
 // Middleware
 app.use(cors({
   origin: '*',
@@ -54,6 +60,8 @@ const orderRoutes = require('./routes/orders');
 const customOrderRoutes = require('./routes/customOrders');
 const embroideryRoutes = require('./routes/embroidery');
 const adminRoutes = require('./routes/admin');
+
+app.get('/api/test', (req, res) => res.json({ working: true, time: new Date() }));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
