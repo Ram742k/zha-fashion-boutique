@@ -228,7 +228,7 @@ const loading = ref(true)
 
 onMounted(async () => {
     try {
-        const response = await axios.get('http://localhost:5000/api/products')
+        const response = await axios.get('https://zha-fashion-boutique.onrender.com/api/products')
         // Take first 4 as arrivals for now
         featuredProducts.value = response.data.slice(0, 4)
     } catch (error) {

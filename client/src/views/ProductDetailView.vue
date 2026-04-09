@@ -102,7 +102,7 @@ const selectedColor = ref('')
 
 onMounted(async () => {
     try {
-        const response = await axios.get(`http://localhost:5000/api/products/${route.params.slug}`)
+        const response = await axios.get(`https://zha-fashion-boutique.onrender.com/api/products/${route.params.slug}`)
         product.value = response.data
         mainImage.value = product.value.images[0] || '/assets/placeholder.png'
         if (product.value.variants?.sizes?.length) selectedSize.value = product.value.variants.sizes[0]

@@ -84,10 +84,10 @@ const products = ref([])
 
 onMounted(async () => {
     try {
-        const catRes = await axios.get('http://localhost:5000/api/categories')
+        const catRes = await axios.get('https://zha-fashion-boutique.onrender.com/api/categories')
         categories.value = ['All Collection', ...catRes.data.map(c => c.name)]
         
-        const prodRes = await axios.get('http://localhost:5000/api/products')
+        const prodRes = await axios.get('https://zha-fashion-boutique.onrender.com/api/products')
         products.value = prodRes.data.map(p => ({
             id: p._id,
             name: p.name,

@@ -153,7 +153,7 @@ const recentWork = ref([])
 
 onMounted(async () => {
     try {
-        const response = await axios.get('http://localhost:5000/api/admin/dashboard/stats')
+        const response = await axios.get('https://zha-fashion-boutique.onrender.com/api/admin/dashboard/stats')
         stats.value = response.data.stats
         recentWork.value = response.data.recentWork
     } catch (error) {

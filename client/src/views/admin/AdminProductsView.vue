@@ -199,7 +199,7 @@ import {
   AlertTriangle as AlertTriangleIcon
 } from 'lucide-vue-next'
 
-const API_BASE = 'http://localhost:5000/api/admin'
+const API_BASE = 'https://zha-fashion-boutique.onrender.com/api/admin'
 
 const products = ref([])
 const categories = ref([])

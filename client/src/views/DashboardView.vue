@@ -140,14 +140,14 @@ const orders = ref([
 
 onMounted(async () => {
     try {
-        const userRes = await axios.get('http://localhost:5000/api/me')
+        const userRes = await axios.get('https://zha-fashion-boutique.onrender.com/api/me')
         const names = userRes.data.name.split(' ')
         profile.value.first_name = names[0]
         profile.value.last_name = names.slice(1).join(' ')
         profile.value.email = userRes.data.email
         profile.value.phone = userRes.data.phone || ''
 
-        const orderRes = await axios.get('http://localhost:5000/api/orders/my-orders')
+        const orderRes = await axios.get('https://zha-fashion-boutique.onrender.com/api/orders/my-orders')
         orders.value = orderRes.data
     } catch (error) {
         console.error('Failed to load dashboard data', error)
@@ -155,7 +155,7 @@ onMounted(async () => {
 })
 
 const downloadInvoice = (orderId) => {
-    window.open(`http://localhost:5000/api/orders/${orderId}/invoice`, '_blank')
+    window.open(`https://zha-fashion-boutique.onrender.com/api/orders/${orderId}/invoice`, '_blank')
 }
 </script>
 

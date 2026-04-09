@@ -71,7 +71,7 @@ const handleLogin = async () => {
   error.value = ''
   
   try {
-    const response = await axios.post('http://localhost:5000/api/login', form)
+    const response = await axios.post('https://zha-fashion-boutique.onrender.com/api/login', form)
     const { access_token, user } = response.data
     
     localStorage.setItem('token', access_token)
