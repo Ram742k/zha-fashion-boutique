@@ -23,6 +23,10 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
  
+// Priority API Routes
+app.get('/api/test', (req, res) => res.json({ working: true, serverTime: new Date() }));
+app.use('/api/auth', authRoutes);
+
 // DB Connection Health Check Middleware
 app.use((req, res, next) => {
   if (mongoose.connection.readyState !== 1 && !req.path.startsWith('/uploads')) {
