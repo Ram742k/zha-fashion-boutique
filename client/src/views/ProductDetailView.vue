@@ -54,7 +54,7 @@
             </div>
 
             <div class="flex flex-col sm:flex-row gap-4">
-              <button class="btn-gold !flex-grow !py-5 flex items-center justify-center space-x-3 shadow-xl">
+              <button @click="addToBag" class="btn-gold !flex-grow !py-5 flex items-center justify-center space-x-3 shadow-xl">
                 <BagIcon :size="18" />
                 <span>Add to Shopping Bag</span>
               </button>
@@ -75,7 +75,10 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
+import axios from 'axios'
+import { useCartStore } from '../store'
 import { 
   ShoppingBag as BagIcon, 
   Heart as HeartIcon, 
@@ -83,25 +86,45 @@ import {
   RefreshCcw as RefreshIcon
 } from 'lucide-vue-next'
 
+const route = useRoute()
+const cartStore = useCartStore()
 const product = ref({
-    name: 'Crimson Silk Saree with Zari Border',
-    description: 'A masterpiece created by our head tailors, this crimson silk saree features intricate hand-woven zari work on the borders and pallu. Perfect for weddings and grand festive occasions. The fabric is pure mulberry silk that drapes like a dream.',
-    price: 18500,
-    sale_price: 15999,
-    category: 'Designer Sarees',
-    images: [
-      'https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=800',
-      'https://images.unsplash.com/photo-1594465919760-442ef5469af5?w=800',
-      'https://images.unsplash.com/photo-1581044777550-4cfa60707c03?w=800',
-      'https://images.unsplash.com/photo-1598507045484-9ca950dc9670?w=800',
-    ],
-    variants: {
-        sizes: ['S', 'M', 'L', 'XL'],
-        colors: ['Crimson', 'Gold', 'Beige']
+    name: 'Loading...',
+    description: '',
+    price: 0,
+    images: [],
+    variants: {}
+})
+const loading = ref(true)
+const mainImage = ref('')
+const selectedSize = ref('')
+const selectedColor = ref('')
+
+onMounted(async () => {
+    try {
+        const response = await axios.get(`http://localhost:5000/api/products/${route.params.slug}`)
+        product.value = response.data
+        mainImage.value = product.value.images[0] || '/assets/placeholder.png'
+        if (product.value.variants?.sizes?.length) selectedSize.value = product.value.variants.sizes[0]
+        if (product.value.variants?.colors?.length) selectedColor.value = product.value.variants.colors[0]
+    } catch (error) {
+        console.error('Failed to load product')
+    } finally {
+        loading.value = false
     }
 })
 
-const mainImage = ref(product.value.images[0])
-const selectedSize = ref('M')
-const selectedColor = ref('Crimson')
+const addToBag = () => {
+    cartStore.addToCart({
+        id: product.value._id,
+        name: product.value.name,
+        price: product.value.sale_price || product.value.price,
+        image: product.value.images[0] || '/assets/placeholder.png',
+        variant: {
+            size: selectedSize.value,
+            color: selectedColor.value
+        }
+    })
+    alert('Added to your shopping bag!')
+}
 </script>

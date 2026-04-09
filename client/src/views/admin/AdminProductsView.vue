@@ -199,7 +199,7 @@ import {
   AlertTriangle as AlertTriangleIcon
 } from 'lucide-vue-next'
 
-const API_BASE = 'https://zha-fashion-backend.onrender.com/api/admin'
+const API_BASE = 'http://localhost:5000/api/admin'
 
 const products = ref([])
 const categories = ref([])
@@ -326,9 +326,7 @@ const saveProduct = async () => {
 
     try {
         if (isEditing.value) {
-            // Laravel requires _method=PUT for multipart/form-data PUT requests
-            formData.append('_method', 'PUT')
-            await axios.post(`${API_BASE}/products/${currentProductId.value}`, formData, {
+            await axios.put(`${API_BASE}/products/${currentProductId.value}`, formData, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             })
             showNotification('Product updated successfully', 'success')

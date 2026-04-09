@@ -82,7 +82,11 @@
                     </div>
                 </div>
                 <div class="space-y-6">
-                    <h5 class="text-[10px] uppercase tracking-[0.3em] font-bold text-gray-400 border-b border-beige/10 pb-2">Customer Requirements</h5>
+                    <h5 class="text-[10px] uppercase tracking-[0.3em] font-bold text-gray-400 border-b border-beige/10 pb-2">Customer Info</h5>
+                    <p class="text-sm font-bold text-brand-navy">{{ selectedOrder.user?.name || 'Guest' }}</p>
+                    <p class="text-xs text-gray-400">{{ selectedOrder.user?.phone || 'No phone provided' }}</p>
+                    
+                    <h5 class="text-[10px] uppercase tracking-[0.3em] font-bold text-gray-400 border-b border-beige/10 pb-2 mt-8">Requirements</h5>
                     <p class="text-xs text-gray-600 leading-relaxed italic">"{{ selectedOrder.requirements || 'No specific instructions provided.' }}"</p>
                 </div>
             </div>
@@ -101,7 +105,7 @@ import {
     ChevronRight as ArrowRightIcon
 } from 'lucide-vue-next'
 
-const API_BASE = 'https://zha-fashion-backend.onrender.com/api/admin/custom-orders'
+const API_BASE = 'http://localhost:5000/api/admin/custom-orders'
 
 const orders = ref([])
 const loading = ref(true)

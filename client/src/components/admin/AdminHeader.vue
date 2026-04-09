@@ -16,7 +16,7 @@
       </div>
 
       <!-- Notifications -->
-      <button class="relative text-brand-navy p-2">
+      <button @click="toggleNotifications" class="relative text-brand-navy p-2 hover:bg-beige/20 transition-all rounded-full">
         <BellIcon :size="18" md:size="20" />
         <span class="absolute top-1 right-1 w-2 h-2 bg-brand-rose rounded-full"></span>
       </button>
@@ -37,7 +37,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { 
   Search as SearchIcon, 
   Bell as BellIcon, 
@@ -47,7 +47,12 @@ import {
 
 defineEmits(['toggle-sidebar'])
 
+const router = useRouter()
 const route = useRoute()
+
+const toggleNotifications = () => {
+  alert('No new notifications for current admin session.')
+}
 
 const pageTitle = computed(() => {
   const parts = route.path.split('/')

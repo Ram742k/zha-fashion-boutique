@@ -102,14 +102,16 @@ import {
   TrendingUp as RevenueIcon, 
   ShoppingBag as OrdersIcon, 
   Scissors as CustomIcon, 
-  Users as UsersIcon 
+  Users as UsersIcon,
+  Palette as EmbroideryIcon
 } from 'lucide-vue-next'
 
 const iconMap = {
   TrendingUp: RevenueIcon,
   ShoppingBag: OrdersIcon,
   Scissors: CustomIcon,
-  Users: UsersIcon
+  Users: UsersIcon,
+  Palette: EmbroideryIcon
 }
 
 const stats = ref([])
@@ -122,7 +124,7 @@ onMounted(() => fetchDashboardData())
 const fetchDashboardData = async () => {
     loading.value = true
     try {
-        const response = await axios.get('https://zha-fashion-backend.onrender.com/api/admin/dashboard/stats')
+        const response = await axios.get('http://localhost:5000/api/admin/dashboard/stats')
         stats.value = response.data.stats
         recentWork.value = response.data.recentWork
         shipments.value = response.data.shipments

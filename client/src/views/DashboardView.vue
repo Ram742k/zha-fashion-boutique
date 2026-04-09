@@ -26,7 +26,7 @@
             </nav>
 
             <div class="pt-8 border-t border-beige">
-               <button class="text-xs text-red-500 uppercase tracking-widest font-bold hover:underline">Log out</button>
+               <button @click="handleLogout" class="text-xs text-red-500 uppercase tracking-widest font-bold hover:underline">Log out</button>
             </div>
           </div>
         </div>
@@ -105,6 +105,9 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '../store'
+import axios from 'axios'
 import { 
   User as UserIcon, 
   ShoppingBag as ShoppingBagIcon, 
@@ -113,6 +116,14 @@ import {
   Heart as HeartIcon, 
   Settings as SettingsIcon 
 } from 'lucide-vue-next'
+
+const router = useRouter()
+const authStore = useAuthStore()
+
+const handleLogout = () => {
+    authStore.logout()
+    router.push('/login')
+}
 
 const activeTab = ref('profile')
 const profile = ref({
@@ -127,8 +138,24 @@ const orders = ref([
     { id: 2, order_number: 'ZF-9022', status: 'Shipped' }
 ])
 
+onMounted(async () => {
+    try {
+        const userRes = await axios.get('http://localhost:5000/api/me')
+        const names = userRes.data.name.split(' ')
+        profile.value.first_name = names[0]
+        profile.value.last_name = names.slice(1).join(' ')
+        profile.value.email = userRes.data.email
+        profile.value.phone = userRes.data.phone || ''
+
+        const orderRes = await axios.get('http://localhost:5000/api/orders/my-orders')
+        orders.value = orderRes.data
+    } catch (error) {
+        console.error('Failed to load dashboard data', error)
+    }
+})
+
 const downloadInvoice = (orderId) => {
-    window.open(`https://zha-fashion-backend.onrender.com/api/admin/orders/${orderId}/invoice`, '_blank')
+    window.open(`http://localhost:5000/api/orders/${orderId}/invoice`, '_blank')
 }
 </script>
 

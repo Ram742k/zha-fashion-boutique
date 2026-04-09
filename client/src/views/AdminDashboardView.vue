@@ -35,7 +35,7 @@
 
        <div class="pt-10 border-t border-gray-800">
           <p class="text-[9px] text-gray-600 uppercase tracking-widest font-bold">Logged in as admin</p>
-          <button class="text-[10px] text-red-500 mt-4 uppercase font-bold hover:underline">Logout</button>
+          <button @click="handleLogout" class="text-[10px] text-red-500 mt-4 uppercase font-bold hover:underline">Logout</button>
        </div>
     </div>
 
@@ -121,22 +121,45 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '../store'
+import axios from 'axios'
 import {
   LayoutDashboard as LayoutDashboardIcon,
   Box as BoxIcon,
   ShoppingBag as ShoppingBagIcon,
   Scissors as ScissorsIcon,
-  Palette as PaletteIcon,
+  Image as ImageIcon,
   User as UserIcon
 } from 'lucide-vue-next'
 
-const stats = [
-    { label: 'Total Sales', value: '₹12,45,900', growth: 12 },
-    { label: 'Pending Orders', value: '45', growth: 4 },
-    { label: 'Custom Orders', value: '18', growth: 25 },
-    { label: 'Revenue/Client', value: '₹18,500', growth: 8 },
-]
+const router = useRouter()
+const authStore = useAuthStore()
+
+const handleLogout = () => {
+    authStore.logout()
+    router.push('/login')
+}
+
+const stats = ref([
+    { label: 'Total Sales', value: '₹0', growth: 0 },
+    { label: 'Pending Orders', value: '0', growth: 0 },
+    { label: 'Subscribers', value: '0', growth: 0 },
+    { label: 'Active Projects', value: '0', growth: 0 },
+])
+
+const recentWork = ref([])
+
+onMounted(async () => {
+    try {
+        const response = await axios.get('http://localhost:5000/api/admin/dashboard/stats')
+        stats.value = response.data.stats
+        recentWork.value = response.data.recentWork
+    } catch (error) {
+        console.error('Failed to load dashboard stats', error)
+    }
+})
 
 const customOrders = [
     { id: 1, user: 'Priya Sharma', type: 'Bridal Blouse', status: 'pending' },

@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import axios from 'axios'
 
 export const useCartStore = defineStore('cart', {
   state: () => ({
@@ -27,6 +28,12 @@ export const useCartStore = defineStore('cart', {
     },
     removeFromCart(productId, variant = null) {
       this.items = this.items.filter(i => !(i.id === productId && JSON.stringify(i.variant) === JSON.stringify(variant)))
+    },
+    updateQuantity(productId, quantity, variant = null) {
+        const item = this.items.find(i => i.id === productId && JSON.stringify(i.variant) === JSON.stringify(variant))
+        if (item) {
+            item.quantity = Math.max(1, quantity)
+        }
     },
     applyCoupon(coupon) {
       this.coupon = coupon
@@ -57,6 +64,8 @@ export const useAuthStore = defineStore('auth', {
       this.user = null
       this.token = null
       localStorage.removeItem('token')
+      localStorage.removeItem('user')
+      delete axios.defaults.headers.common['Authorization']
     }
   }
 })

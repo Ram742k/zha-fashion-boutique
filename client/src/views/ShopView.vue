@@ -74,22 +74,33 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import axios from 'axios'
 import { Heart as HeartIcon, ShoppingBag as ShoppingBagIcon } from 'lucide-vue-next'
 
-const categories = ['All Collection', 'Sarees', 'Lehengas', 'Kurti Sets', 'Anarkalis', 'Gowns']
+const categories = ref(['All Collection'])
 const activeCat = ref('All Collection')
+const products = ref([])
 
-const products = ref([
-    { id: 1, name: 'Crimson Silk Saree with Zari Border', slug: 'crimson-saree', category: 'Sarees', price: 18500, sale_price: 15999, image: '/assets/shop1.png' },
-    { id: 2, name: 'Hand-Embroidered Velvet Lehenga', slug: 'velvet-lehenga', category: 'Lehengas', price: 45000, image: '/assets/lehengas.png' },
-    { id: 3, name: 'Royal Purple Gown', slug: 'blue-anarkali', category: 'Gowns', price: 45000, image: '/assets/shop2.png' },
-    { id: 4, name: 'Emerald Green Georgette Gown', slug: 'green-gown', category: 'Gowns', price: 21000, image: '/assets/arrival1.png' },
-    { id: 5, name: 'Ivory Chiffon Saree with Pearl Work', slug: 'ivory-saree', category: 'Sarees', price: 25000, image: '/assets/arrival2.png' },
-    { id: 6, name: 'Peach Floral Print Kurti Set', slug: 'floral-kurti', category: 'Kurti Sets', price: 8500, sale_price: 6499, image: '/assets/arrival4.png' },
-    { id: 7, name: 'Designer Aari Blouse', slug: 'gold-lehenga', category: 'Blouses', price: 8500, image: '/assets/shop3.png' },
-    { id: 8, name: 'Organza Saree with Mirror Work', slug: 'organza-saree', category: 'Sarees', price: 19500, image: '/assets/arrival3.png' },
-])
+onMounted(async () => {
+    try {
+        const catRes = await axios.get('http://localhost:5000/api/categories')
+        categories.value = ['All Collection', ...catRes.data.map(c => c.name)]
+        
+        const prodRes = await axios.get('http://localhost:5000/api/products')
+        products.value = prodRes.data.map(p => ({
+            id: p._id,
+            name: p.name,
+            slug: p.slug,
+            category: p.category_id?.name || 'Uncategorized',
+            price: p.price,
+            sale_price: p.sale_price,
+            image: p.images?.[0] || '/assets/placeholder.png'
+        }))
+    } catch (error) {
+        console.error('Failed to fetch shop data', error)
+    }
+})
 
 const filteredProducts = computed(() => {
     if (activeCat.value === 'All Collection') return products.value

@@ -145,26 +145,28 @@
         </div>
         
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
-          <div v-for="i in 4" :key="i" class="group reveal reveal-up" :style="`transition-delay: ${i*0.1}s`">
-            <div class="relative overflow-hidden aspect-[3/4.5] rounded-sm bg-white shadow-xl group-hover:shadow-2xl transition-all duration-700">
-              <img :src="placeholderImage(i)" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
-              
-              <!-- Badge -->
-              <div class="absolute top-6 left-6 transition-all duration-500 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100">
-                <span class="bg-brand-navy/80 backdrop-blur-md text-brand-gold text-[9px] px-4 py-2 uppercase tracking-tighter font-bold border border-brand-gold/20 italic">Bestseller</span>
+          <div v-for="(product, i) in featuredProducts" :key="product._id" class="group reveal reveal-up" :style="`transition-delay: ${i*0.1}s`">
+            <router-link :to="'/product/' + product.slug">
+              <div class="relative overflow-hidden aspect-[3/4.5] rounded-sm bg-white shadow-xl group-hover:shadow-2xl transition-all duration-700">
+                <img :src="product.images?.[0] || '/assets/placeholder.png'" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+                
+                <!-- Badge -->
+                <div class="absolute top-6 left-6 transition-all duration-500 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100">
+                  <span class="bg-brand-navy/80 backdrop-blur-md text-brand-gold text-[9px] px-4 py-2 uppercase tracking-tighter font-bold border border-brand-gold/20 italic">Bestseller</span>
+                </div>
+  
+                <!-- Quick Action Box -->
+                <div class="absolute inset-x-0 bottom-0 p-6 translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
+                  <button class="w-full py-4 glass text-[10px] font-bold uppercase tracking-[0.2em] text-brand-navy hover:bg-brand-navy hover:text-white transition-all shadow-xl">
+                    Quick View
+                  </button>
+                </div>
               </div>
-
-              <!-- Quick Action Box -->
-              <div class="absolute inset-x-0 bottom-0 p-6 translate-y-10 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500">
-                <button class="w-full py-4 glass text-[10px] font-bold uppercase tracking-[0.2em] text-brand-navy hover:bg-brand-navy hover:text-white transition-all shadow-xl">
-                  Quick View
-                </button>
+              <div class="pt-8 text-center">
+                <h4 class="font-playfair text-xl text-brand-navy mb-2 hover:text-brand-gold cursor-pointer transition-colors">{{ product.name }}</h4>
+                <p class="text-brand-gold font-bold font-inter text-sm tracking-widest uppercase">₹{{ (product.sale_price || product.price).toLocaleString() }}</p>
               </div>
-            </div>
-            <div class="pt-8 text-center">
-              <h4 class="font-playfair text-xl text-brand-navy mb-2 hover:text-brand-gold cursor-pointer transition-colors">{{ getArrivalName(i) }}</h4>
-              <p class="text-brand-gold font-bold font-inter text-sm tracking-widest uppercase">{{ getArrivalPrice(i) }}</p>
-            </div>
+            </router-link>
           </div>
         </div>
       </div>
@@ -221,26 +223,21 @@ const services = [
   }
 ]
 
-const arrivalNames = [
-  'Draped Chiffon Gown',
-  'Floral Silk Suit',
-  'Modern Anarkali',
-  'Designer Kurti'
-]
+const featuredProducts = ref([])
+const loading = ref(true)
 
-const arrivalPrices = [
-  '₹24,999',
-  '₹18,500',
-  '₹32,000',
-  '₹12,499'
-]
+onMounted(async () => {
+    try {
+        const response = await axios.get('http://localhost:5000/api/products')
+        // Take first 4 as arrivals for now
+        featuredProducts.value = response.data.slice(0, 4)
+    } catch (error) {
+        console.error('Failed to load arrivals')
+    } finally {
+        loading.value = false
+    }
 
-const placeholderImage = (i) => `/assets/arrival${i}.png`
-const getArrivalName = (i) => arrivalNames[i-1]
-const getArrivalPrice = (i) => arrivalPrices[i-1]
-
-onMounted(() => {
-  // Reveal animations on scroll
+    // Reveal animations on scroll
   const observerOptions = {
     threshold: 0.15,
     rootMargin: '0px'

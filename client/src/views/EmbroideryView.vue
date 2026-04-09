@@ -36,17 +36,18 @@
             
             <h2 class="text-3xl font-playfair mb-12 text-center uppercase tracking-widest border-b border-gold pb-6">Upload Your Design</h2>
             
-            <div class="space-y-12">
+            <form @submit.prevent="submitEmbroidery" class="space-y-12">
                <!-- Image Upload Box -->
                <div class="group">
-                  <div class="aspect-video border-2 border-dashed border-gold-dark/30 bg-white flex flex-col items-center justify-center p-12 cursor-pointer hover:bg-white hover:border-gold transition-all relative overflow-hidden">
+                  <input type="file" ref="fileInput" class="hidden" @change="handleFileUpload" accept="image/*" />
+                  <div @click="fileInput.click()" class="aspect-video border-2 border-dashed border-gold-dark/30 bg-white flex flex-col items-center justify-center p-12 cursor-pointer hover:bg-white hover:border-gold transition-all relative overflow-hidden">
                      <div v-if="!imagePreview" class="flex flex-col items-center">
                         <UploadIcon :size="48" class="text-gold mb-6 group-hover:scale-110 transition-transform" />
                         <p class="font-bold uppercase tracking-widest text-xs">Drop your sketch or photo here</p>
                         <p class="text-[10px] text-gray-400 mt-4 lowercase font-inter italic">(jpg, png or pdf max 25mb)</p>
                      </div>
                      <img v-else :src="imagePreview" class="absolute inset-0 w-full h-full object-cover" />
-                     <button v-if="imagePreview" @click="imagePreview = null" class="absolute top-4 right-4 bg-red-500 text-white p-2 rounded-full shadow-lg">
+                     <button v-if="imagePreview" type="button" @click.stop="imagePreview = null" class="absolute top-4 right-4 bg-red-500 text-white p-2 rounded-full shadow-lg z-10">
                        <XIcon :size="16" />
                      </button>
                   </div>
@@ -55,11 +56,11 @@
                <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
                   <div class="space-y-3">
                      <label class="text-[11px] uppercase tracking-widest font-bold text-gray-400">Approx Quantity</label>
-                     <input type="number" placeholder="Min. 5 pieces" class="input-field bg-white" />
+                     <input type="number" v-model="form.quantity" placeholder="Min. 5 pieces" class="input-field bg-white" />
                   </div>
                   <div class="space-y-3">
                      <label class="text-[11px] uppercase tracking-widest font-bold text-gray-400">Embroidery Type</label>
-                     <select class="input-field bg-white">
+                     <select v-model="form.type" class="input-field bg-white">
                         <option>Zardosi</option>
                         <option>Aari Work</option>
                         <option>Cut Work</option>
@@ -71,13 +72,13 @@
 
                <div class="space-y-3">
                   <label class="text-[11px] uppercase tracking-widest font-bold text-gray-400">Project Requirements</label>
-                  <textarea rows="5" placeholder="Specify color combinations, thread type, etc." class="input-field bg-white resize-none"></textarea>
+                  <textarea v-model="form.requirements" rows="5" placeholder="Specify color combinations, thread type, etc." class="input-field bg-white resize-none"></textarea>
                </div>
 
-               <button class="btn-gold !bg-luxury-dark w-full !py-6 text-sm !font-bold tracking-[0.3em] shadow-lg hover:!bg-black transition-all">Submit for Professional Quote</button>
+               <button type="submit" class="btn-gold !bg-luxury-dark w-full !py-6 text-sm !font-bold tracking-[0.3em] shadow-lg hover:!bg-black transition-all">Submit for Professional Quote</button>
                
                <p class="text-center text-xs text-gray-400 italic">Expected reply within 12-24 hours via WhatsApp/Email.</p>
-            </div>
+            </form>
          </div>
       </div>
     </div>
@@ -85,11 +86,49 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
+import axios from 'axios'
+import { useRouter } from 'vue-router'
 import { 
   UploadCloud as UploadIcon,
   X as XIcon
 } from 'lucide-vue-next'
 
+const router = useRouter()
+const fileInput = ref(null)
 const imagePreview = ref(null)
+
+const handleFileUpload = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+        const reader = new FileReader()
+        reader.onload = (event) => {
+            imagePreview.value = event.target.result
+        }
+        reader.readAsDataURL(file)
+    }
+}
+
+const form = reactive({
+    quantity: 5,
+    type: 'Zardosi',
+    requirements: ''
+})
+
+const submitEmbroidery = async () => {
+    try {
+        const payload = {
+            design_image: imagePreview.value,
+            quantity: form.quantity,
+            type: form.type,
+            notes: form.requirements
+        }
+        await axios.post('http://localhost:5000/api/embroidery', payload)
+        alert('Design submitted! Our team will get back to you with a quote.')
+        router.push('/dashboard')
+    } catch (error) {
+        alert('Please login to submit your design.')
+        router.push('/login')
+    }
+}
 </script>

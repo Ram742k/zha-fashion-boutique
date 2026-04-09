@@ -82,10 +82,17 @@
               <!-- File upload -->
               <div class="border-t border-beige pt-10">
                  <label class="block text-[10px] uppercase font-bold text-gray-400 mb-4 tracking-widest">Upload Reference Design (Optional)</label>
-                 <div class="border-2 border-dashed border-beige-dark p-12 text-center bg-beige-light/50 flex flex-col items-center group cursor-pointer hover:bg-beige-light hover:border-gold transition-all">
-                    <UploadIcon class="text-gold mb-4 group-hover:-translate-y-1 transition-transform" :size="32" />
-                    <p class="text-sm font-medium">Click or drag image to upload</p>
-                    <p class="text-[10px] uppercase text-gray-400 mt-2">PNG, JPG up to 10MB</p>
+                 <input type="file" ref="fileInput" class="hidden" @change="handleFileUpload" accept="image/*" />
+                 <div @click="fileInput.click()" class="border-2 border-dashed border-beige-dark p-12 text-center bg-beige-light/50 flex flex-col items-center group cursor-pointer hover:bg-beige-light hover:border-gold transition-all relative">
+                    <div v-if="!previewImage" class="flex flex-col items-center">
+                       <UploadIcon class="text-gold mb-4 group-hover:-translate-y-1 transition-transform" :size="32" />
+                       <p class="text-sm font-medium">Click or drag image to upload</p>
+                       <p class="text-[10px] uppercase text-gray-400 mt-2">PNG, JPG up to 10MB</p>
+                    </div>
+                    <img v-else :src="previewImage" class="absolute inset-0 w-full h-full object-cover" />
+                    <button v-if="previewImage" type="button" @click.stop="previewImage = null" class="absolute top-4 right-4 bg-red-500 text-white p-2 rounded-full shadow-lg z-10">
+                      <XIcon :size="16" />
+                    </button>
                  </div>
               </div>
 
@@ -96,7 +103,7 @@
               </div>
 
               <div class="pt-10 flex flex-col items-center">
-                 <button class="btn-gold !px-20 !py-5 shadow-2xl hover:scale-105 transition-transform">
+                 <button type="submit" class="btn-gold !px-20 !py-5 shadow-2xl hover:scale-105 transition-transform">
                    Request Price Estimate
                  </button>
                  <p class="text-[10px] uppercase text-gray-400 mt-6 tracking-widest font-bold">Secure Order | No immediate payment required</p>
@@ -111,11 +118,29 @@
 
 <script setup>
 import { ref, reactive } from 'vue'
+import axios from 'axios'
+import { useRouter } from 'vue-router'
 import { 
   Check as CheckIcon, 
   MessageCircle as WhatsappIcon, 
-  Upload as UploadIcon
+  Upload as UploadIcon,
+  X as XIcon
 } from 'lucide-vue-next'
+
+const router = useRouter()
+const fileInput = ref(null)
+const previewImage = ref(null)
+
+const handleFileUpload = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+        const reader = new FileReader()
+        reader.onload = (event) => {
+            previewImage.value = event.target.result
+        }
+        reader.readAsDataURL(file)
+    }
+}
 
 const garmentTypes = ['Blouse', 'Salwar Kameez', 'Lehenga', 'Gown']
 
@@ -134,8 +159,21 @@ const measurements = {
     gown: { 'Full Length': 0, 'Bust': 0, 'Waist': 0, 'Shoulder': 0, 'Arm Hole': 0 }
 }
 
-const submitOrder = () => {
-    console.log('Submitting Order:', formData)
-    alert('Order request submitted! Our designer will contact you shortly with a quote.')
+const submitOrder = async () => {
+    try {
+        const payload = {
+            item_type: formData.garmentType,
+            fabric: formData.fabricType,
+            measurements: formData.measurements,
+            notes: formData.notes,
+            image: previewImage.value
+        }
+        await axios.post('http://localhost:5000/api/custom-orders', payload)
+        alert('Order request submitted! Our designer will contact you shortly with a quote.')
+        router.push('/dashboard')
+    } catch (error) {
+        alert('Please login to submit a quote request.')
+        router.push('/login')
+    }
 }
 </script>

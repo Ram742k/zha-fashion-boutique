@@ -27,7 +27,7 @@
     </nav>
 
     <div class="p-6 border-t border-white/5">
-      <button class="flex items-center space-x-4 text-white/30 hover:text-brand-rose transition-colors uppercase tracking-[0.2em] text-[10px] font-bold w-full text-left">
+      <button @click="handleLogout" class="flex items-center space-x-4 text-white/30 hover:text-brand-rose transition-colors uppercase tracking-[0.2em] text-[10px] font-bold w-full text-left">
         <LogOutIcon :size="16" />
         <span>Logout</span>
       </button>
@@ -36,6 +36,8 @@
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '../../store'
 import { 
   LayoutDashboard as DashboardIcon, 
   ShoppingBag as ProductsIcon, 
@@ -51,7 +53,14 @@ import {
   X as XIcon
 } from 'lucide-vue-next'
 
-defineEmits(['close'])
+const router = useRouter()
+const authStore = useAuthStore()
+const emit = defineEmits(['close'])
+
+const handleLogout = () => {
+    authStore.logout()
+    router.push('/login')
+}
 
 const navItems = [
   { name: 'Dashboard', path: '/admin/dashboard', icon: DashboardIcon },
@@ -60,7 +69,8 @@ const navItems = [
   { name: 'Orders', path: '/admin/orders', icon: OrdersIcon },
   { name: 'Payments', path: '/admin/billing', icon: SubscriptionIcon },
   { name: 'Custom Stitching', path: '/admin/custom-orders', icon: CustomOrdersIcon },
-  { name: 'Embroidery', path: '/admin/embroidery', icon: EmbroideryIcon },
+  { name: 'Embroidery Gallery', path: '/admin/embroidery', icon: EmbroideryIcon },
+  { name: 'Embroidery Orders', path: '/admin/embroidery-submissions', icon: EmbroideryIcon },
   { name: 'Users', path: '/admin/users', icon: UsersIcon },
   { name: 'Settings', path: '/admin/settings', icon: SettingsIcon },
 ]

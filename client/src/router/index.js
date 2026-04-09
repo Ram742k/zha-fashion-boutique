@@ -13,9 +13,12 @@ const routes = [
   { path: '/dashboard', name: 'dashboard', component: () => import('../views/DashboardView.vue') },
   { path: '/about', name: 'about', component: () => import('../views/AboutView.vue') },
   { path: '/contact', name: 'contact', component: () => import('../views/ContactView.vue') },
+  { path: '/login', name: 'login', component: () => import('../views/LoginView.vue') },
+  { path: '/register', name: 'register', component: () => import('../views/RegisterView.vue') },
   {
     path: '/admin',
     component: () => import('../components/admin/AdminLayout.vue'),
+    meta: { requiresAdmin: true },
     redirect: { name: 'admin-dashboard' },
     children: [
       { path: 'dashboard', name: 'admin-dashboard', component: () => import('../views/admin/AdminDashboardView.vue') },
@@ -25,6 +28,7 @@ const routes = [
       { path: 'billing', name: 'admin-billing', component: () => import('../views/admin/AdminBillingView.vue') },
       { path: 'custom-orders', name: 'admin-custom-orders', component: () => import('../views/admin/AdminCustomOrdersView.vue') },
       { path: 'embroidery', name: 'admin-embroidery', component: () => import('../views/admin/AdminEmbroideryView.vue') },
+      { path: 'embroidery-submissions', name: 'admin-embroidery-submissions', component: () => import('../views/admin/AdminEmbroiderySubmissionsView.vue') },
       { path: 'users', name: 'admin-users', component: () => import('../views/admin/AdminUsersView.vue') },
       { path: 'subscriptions', name: 'admin-subscriptions', component: () => import('../views/admin/AdminSubscriptionsView.vue') },
       { path: 'coupons', name: 'admin-coupons', component: () => import('../views/admin/AdminCouponsView.vue') },
@@ -40,6 +44,24 @@ const router = createRouter({
     if (savedPosition) return savedPosition
     return { top: 0 }
   },
+})
+
+router.beforeEach((to, from, next) => {
+  const user = JSON.parse(localStorage.getItem('user') || 'null')
+  const token = localStorage.getItem('token')
+
+  if (to.meta.requiresAdmin) {
+    if (!token || !user || user.role !== 'admin') {
+      return next({ name: 'login' })
+    }
+  }
+
+  if (to.name === 'login' && token) {
+      if (user?.role === 'admin') return next({ name: 'admin-dashboard' })
+      return next({ name: 'dashboard' })
+  }
+
+  next()
 })
 
 export default router

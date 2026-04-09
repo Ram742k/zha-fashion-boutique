@@ -15,6 +15,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        User::updateOrCreate(
+            ['email' => 'admin@gmail.com'],
+            [
+                'name' => 'Admin User',
+                'password' => \Illuminate\Support\Facades\Hash::make('123456'),
+                'role' => 'admin',
+            ]
+        );
+
         $this->call(BoutiqueSeeder::class);
     }
 }
