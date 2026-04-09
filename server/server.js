@@ -12,6 +12,11 @@ app.use((req, res, next) => {
   next();
 });
 
+const bcrypt = require('bcryptjs');
+const User = require('./models/User');
+const Category = require('./models/Category');
+const Product = require('./models/Product');
+
 // Middleware
 app.use(cors({
   origin: '*',
@@ -34,6 +39,91 @@ const adminRoutes = require('./routes/admin');
 
 // Priority API Routes (Bypass DB check)
 app.get('/api/test', (req, res) => res.json({ working: true, serverTime: new Date() }));
+
+// EMERGENCY SEED ROUTE (Delete after use)
+app.get('/api/seed-database', async (req, res) => {
+  try {
+    // Clear existing data
+    await User.deleteMany({});
+    await Category.deleteMany({});
+    await Product.deleteMany({});
+
+    // 1. Create Admin User
+    const hashedPassword = await bcrypt.hash('123456', 10);
+    const admin = await User.create({
+      name: 'Admin User',
+      email: 'admin@gmail.com',
+      password: hashedPassword,
+      role: 'admin',
+    });
+
+    // 2. Create Categories
+    const categories = [
+      { name: 'Lehengas', slug: 'lehengas' },
+      { name: 'Sarees', slug: 'sarees' },
+      { name: 'Kurti Sets', slug: 'kurti-sets' },
+      { name: 'Anarkalis', slug: 'anarkalis' },
+      { name: 'Gowns', slug: 'gowns' },
+    ];
+    const createdCategories = await Category.insertMany(categories);
+
+    // 3. Create Products
+    const products = [
+      {
+        category_id: createdCategories[1]._id,
+        name: 'Crimson Silk Saree with Zari Border',
+        slug: 'crimson-saree',
+        description: 'Luxury silk saree',
+        price: 18500,
+        sale_price: 15999,
+        images: [
+          '/assets/shop1.png',
+          '/assets/product1.png',
+          '/assets/product2.png',
+          '/assets/shop3.png'
+        ],
+        is_featured: true,
+      },
+      {
+        category_id: createdCategories[0]._id,
+        name: 'Hand-Embroidered Velvet Lehenga',
+        slug: 'velvet-lehenga',
+        description: 'Exquisite bridal lehenga with intricate thread work and premium velvet fabric.',
+        price: 45000,
+        images: [
+          '/assets/lehengas.png',
+          '/assets/shop2.png',
+          '/assets/designer_lehenga.png'
+        ],
+        is_featured: true,
+      },
+      {
+        category_id: createdCategories[4]._id,
+        name: 'Royal Purple Gown',
+        slug: 'blue-anarkali',
+        description: 'Purple beauty with modern silhouette and elegant draping.',
+        price: 45000,
+        images: [
+          '/assets/shop2.png',
+          '/assets/salwar.png'
+        ],
+      }
+    ];
+    await Product.insertMany(products);
+
+    res.json({ 
+      success: true,
+      message: "Database seeded fully!", 
+      counts: {
+        users: 1,
+        categories: categories.length,
+        products: products.length
+      }
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // DB Connection Health Check Middleware
 app.use((req, res, next) => {
