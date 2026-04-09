@@ -55,7 +55,7 @@ const customOrderRoutes = require('./routes/customOrders');
 const embroideryRoutes = require('./routes/embroidery');
 const adminRoutes = require('./routes/admin');
 
-app.use('/api', authRoutes);
+app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/admin/products', productRoutes);
@@ -64,6 +64,15 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/custom-orders', customOrderRoutes);
 app.use('/api/embroidery', embroideryRoutes);
 app.use('/api/admin', adminRoutes);
+
+// Serve Frontend in Production
+const publicPath = path.join(__dirname, 'public');
+app.use(express.static(publicPath));
+app.get('*', (req, res) => {
+  if (!req.path.startsWith('/api') && !req.path.startsWith('/uploads')) {
+    res.sendFile(path.join(publicPath, 'index.html'));
+  }
+});
 
 // MongoDB Connection & Server Start
 const PORT = process.env.PORT || 5000;

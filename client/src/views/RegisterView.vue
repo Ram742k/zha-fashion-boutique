@@ -83,7 +83,7 @@ const handleRegister = async () => {
   error.value = ''
   
   try {
-    const response = await axios.post('https://zha-fashion-boutique.onrender.com/api/register', form)
+    const response = await axios.post('https://zha-fashion-boutique.onrender.com/api/auth/register', form)
     const { access_token, user } = response.data
     
     localStorage.setItem('token', access_token)

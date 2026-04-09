@@ -140,7 +140,7 @@ const orders = ref([
 
 onMounted(async () => {
     try {
-        const userRes = await axios.get('https://zha-fashion-boutique.onrender.com/api/me')
+        const userRes = await axios.get('https://zha-fashion-boutique.onrender.com/api/auth/me')
         const names = userRes.data.name.split(' ')
         profile.value.first_name = names[0]
         profile.value.last_name = names.slice(1).join(' ')
