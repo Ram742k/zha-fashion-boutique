@@ -23,9 +23,17 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
  
-// Priority API Routes
+// Routes
+const authRoutes = require('./routes/auth');
+const productRoutes = require('./routes/products');
+const categoryRoutes = require('./routes/categories');
+const orderRoutes = require('./routes/orders');
+const customOrderRoutes = require('./routes/customOrders');
+const embroideryRoutes = require('./routes/embroidery');
+const adminRoutes = require('./routes/admin');
+
+// Priority API Routes (Bypass DB check)
 app.get('/api/test', (req, res) => res.json({ working: true, serverTime: new Date() }));
-app.use('/api/auth', authRoutes);
 
 // DB Connection Health Check Middleware
 app.use((req, res, next) => {
@@ -56,17 +64,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 app.set('upload', upload);
 
-// Routes
-const authRoutes = require('./routes/auth');
-const productRoutes = require('./routes/products');
-const categoryRoutes = require('./routes/categories');
-const orderRoutes = require('./routes/orders');
-const customOrderRoutes = require('./routes/customOrders');
-const embroideryRoutes = require('./routes/embroidery');
-const adminRoutes = require('./routes/admin');
-
-app.get('/api/test', (req, res) => res.json({ working: true, time: new Date() }));
-
+// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
@@ -77,13 +75,12 @@ app.use('/api/custom-orders', customOrderRoutes);
 app.use('/api/embroidery', embroideryRoutes);
 app.use('/api/admin', adminRoutes);
 
+
 // Serve Frontend in Production
 const publicPath = path.join(__dirname, 'public');
 app.use(express.static(publicPath));
-app.get('(.*)', (req, res) => {
-  if (!req.path.startsWith('/api') && !req.path.startsWith('/uploads')) {
-    res.sendFile(path.join(publicPath, 'index.html'));
-  }
+app.get(/^(?!\/(api|uploads)).*/, (req, res) => {
+  res.sendFile(path.join(publicPath, 'index.html'));
 });
 
 // MongoDB Connection & Server Start
