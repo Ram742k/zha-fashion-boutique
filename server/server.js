@@ -80,7 +80,7 @@ app.use('/api/admin', adminRoutes);
 // Serve Frontend in Production
 const publicPath = path.join(__dirname, 'public');
 app.use(express.static(publicPath));
-app.get('*', (req, res) => {
+app.get('(.*)', (req, res) => {
   if (!req.path.startsWith('/api') && !req.path.startsWith('/uploads')) {
     res.sendFile(path.join(publicPath, 'index.html'));
   }
