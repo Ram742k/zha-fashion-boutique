@@ -36,6 +36,7 @@ const categoryRoutes = require('./routes/categories');
 const orderRoutes = require('./routes/orders');
 const customOrderRoutes = require('./routes/customOrders');
 const embroideryRoutes = require('./routes/embroidery');
+const appointmentRoutes = require('./routes/appointments');
 const adminRoutes = require('./routes/admin');
 
 // Priority API Routes (Bypass DB check)
@@ -79,6 +80,7 @@ app.use('/api/admin/categories', categoryRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/custom-orders', customOrderRoutes);
 app.use('/api/embroidery', embroideryRoutes);
+app.use('/api/appointments', appointmentRoutes);
 app.use('/api/admin', adminRoutes);
 
 
@@ -86,7 +88,11 @@ app.use('/api/admin', adminRoutes);
 const publicPath = path.join(__dirname, 'public');
 app.use(express.static(publicPath));
 app.get(/^(?!\/(api|uploads)).*/, (req, res) => {
-  res.sendFile(path.join(publicPath, 'index.html'));
+  res.sendFile(path.join(publicPath, 'index.html'), (err) => {
+    if (err) {
+      res.status(404).send('Frontend index.html not found. Please run npm run build in client.');
+    }
+  });
 });
 
 // MongoDB Connection & Server Start

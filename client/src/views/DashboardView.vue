@@ -61,21 +61,56 @@
                 </div>
             </div>
 
+            <!-- Custom Stitching View -->
+            <div v-if="activeTab === 'custom'" class="animate-fade-in">
+                <h2 class="text-2xl font-playfair font-bold text-luxury-dark mb-10 border-b border-beige pb-6 uppercase tracking-widest">Custom Tailoring Orders</h2>
+                <div v-if="customOrders.length === 0" class="text-center py-12 text-gray-400 italic text-sm">No custom stitching requests found.</div>
+                <div v-else class="space-y-6">
+                    <div v-for="order in customOrders" :key="order._id" class="p-8 border border-beige bg-white hover:shadow-xl transition-all duration-500">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-center">
+                            <div>
+                                <p class="text-[9px] uppercase tracking-[0.3em] text-gray-400 font-bold mb-1">Order #</p>
+                                <p class="text-sm font-bold text-luxury-dark">{{ order.order_number }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[9px] uppercase tracking-[0.3em] text-gray-400 font-bold mb-1">Garment & Fabric</p>
+                                <p class="text-xs font-bold text-luxury-dark capitalize">{{ order.item_type }} - {{ order.fabric }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[9px] uppercase tracking-[0.3em] text-gray-400 font-bold mb-1">Price Estimate</p>
+                                <p class="text-xs font-bold text-luxury-dark">{{ order.price_estimate ? '₹' + order.price_estimate.toLocaleString() : 'Awaiting Quote' }}</p>
+                            </div>
+                            <div>
+                                <p class="text-[9px] uppercase tracking-[0.3em] text-gray-400 font-bold mb-1">Status</p>
+                                <span class="px-2 py-1 text-[9px] font-bold border uppercase tracking-wider bg-gold-dark/10 text-gold-dark border-gold-dark/20 capitalize">{{ order.status }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Profile View -->
             <div v-if="activeTab === 'profile'" class="animate-fade-in text-inter">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-16">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-10 mb-16">
                     <div class="bg-beige-light/30 p-10 border border-beige">
                         <h2 class="text-xl font-playfair font-bold text-luxury-dark mb-6 lowercase first-letter:uppercase tracking-normal italic">Order Tracking</h2>
                         <p class="text-xs text-gray-500 leading-relaxed font-inter">View your active shipments and real-time delivery status for current orders.</p>
                     </div>
                     <div class="bg-beige-light/30 p-10 border border-beige">
                         <h2 class="text-xl font-playfair font-bold text-luxury-dark mb-6 lowercase first-letter:uppercase tracking-normal italic">Custom Stitching</h2>
-                        <p class="text-xs text-gray-500 leading-relaxed font-inter">Request status for 'Bridal Blouse' is currently under design review.</p>
+                        <p class="text-xs text-gray-500 leading-relaxed font-inter">Request status for custom tailoring is active in your pipeline tab.</p>
+                    </div>
+                    <div class="bg-beige-light/30 p-10 border border-beige flex flex-col justify-between">
+                        <div>
+                            <h2 class="text-xl font-playfair font-bold text-luxury-dark mb-6 lowercase first-letter:uppercase tracking-normal italic">Bridal Consultation</h2>
+                            <p class="text-xs text-gray-500 leading-relaxed font-inter mb-4">Book a luxury bridal design session with our stylist desk.</p>
+                        </div>
+                        <router-link to="/bridal-consultation" class="text-[10px] uppercase tracking-widest font-bold text-gold hover:underline">Book Session &rarr;</router-link>
                     </div>
                 </div>
 
                 <h2 class="text-2xl font-playfair font-bold text-luxury-dark mb-10 border-b border-beige pb-6 uppercase tracking-widest">Account Details</h2>
-                <form class="grid grid-cols-1 md:grid-cols-2 gap-10 font-inter uppercase tracking-widest text-[9px] font-bold text-gray-400">
+                <form @submit.prevent="saveProfile" class="grid grid-cols-1 md:grid-cols-2 gap-10 font-inter uppercase tracking-widest text-[9px] font-bold text-gray-400">
                     <div class="space-y-4">
                         <label>First Name</label>
                         <input type="text" v-model="profile.first_name" class="w-full bg-beige-light border-none px-6 py-4 text-xs font-bold text-luxury-dark outline-none focus:ring-1 ring-gold" />
@@ -93,7 +128,7 @@
                         <input type="tel" v-model="profile.phone" class="w-full bg-beige-light border-none px-6 py-4 text-xs font-bold text-luxury-dark outline-none focus:ring-1 ring-gold" />
                     </div>
                     <div class="pt-8">
-                        <button class="btn-gold !bg-luxury-dark !text-[10px] !px-12 hover:bg-black transition-colors">Save Profile</button>
+                        <button type="submit" class="btn-gold !bg-luxury-dark !text-[10px] !px-12 hover:bg-black transition-colors">Save Profile</button>
                     </div>
                 </form>
             </div>
@@ -127,32 +162,51 @@ const handleLogout = () => {
 
 const activeTab = ref('profile')
 const profile = ref({
-    first_name: 'Priya',
-    last_name: 'Sharma',
-    email: 'priya@example.com',
-    phone: '+91 98765 43210'
+    first_name: '',
+    last_name: '',
+    email: '',
+    phone: ''
 })
 
-const orders = ref([
-    { id: 1, order_number: 'ZF-9021', status: 'Delivered' },
-    { id: 2, order_number: 'ZF-9022', status: 'Shipped' }
-])
+const orders = ref([])
+const customOrders = ref([])
 
 onMounted(async () => {
     try {
         const userRes = await axios.get('/auth/me')
-        const names = userRes.data.name.split(' ')
-        profile.value.first_name = names[0]
+        const names = (userRes.data.name || '').split(' ')
+        profile.value.first_name = names[0] || ''
         profile.value.last_name = names.slice(1).join(' ')
         profile.value.email = userRes.data.email
         profile.value.phone = userRes.data.phone || ''
 
         const orderRes = await axios.get('/orders/my-orders')
         orders.value = orderRes.data
+
+        const customRes = await axios.get('/custom-orders/my-orders')
+        customOrders.value = customRes.data
     } catch (error) {
         console.error('Failed to load dashboard data', error)
     }
 })
+
+const saveProfile = async () => {
+    try {
+        const name = `${profile.value.first_name} ${profile.value.last_name}`
+        const response = await axios.put('/auth/profile', {
+            name,
+            email: profile.value.email,
+            phone: profile.value.phone
+        })
+        const user = response.data
+        localStorage.setItem('user', JSON.stringify(user))
+        authStore.user = user
+        alert('Profile updated successfully!')
+    } catch (error) {
+        console.error('Failed to update profile', error)
+        alert(error.response?.data?.message || 'Failed to update profile')
+    }
+}
 
 const downloadInvoice = (orderId) => {
     window.open(`${axios.defaults.baseURL}/orders/${orderId}/invoice?token=${localStorage.getItem('token')}`, '_blank')

@@ -17,4 +17,13 @@ router.post('/', authMiddleware, async (req, res) => {
   }
 });
 
+router.get('/my-submissions', authMiddleware, async (req, res) => {
+  try {
+    const submissions = await EmbroideryOrder.find({ user: req.user._id }).sort({ createdAt: -1 });
+    res.json(submissions);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;

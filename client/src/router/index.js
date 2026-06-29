@@ -6,6 +6,7 @@ const routes = [
   { path: '/shop', name: 'shop', component: () => import('../views/ShopView.vue') },
   { path: '/product/:slug', name: 'product-detail', component: () => import('../views/ProductDetailView.vue') },
   { path: '/custom-stitching', name: 'custom-stitching', component: () => import('../views/CustomStitchingView.vue') },
+  { path: '/bridal-consultation', name: 'bridal-consultation', component: () => import('../views/BridalBookingView.vue') },
   { path: '/embroidery', name: 'embroidery', component: () => import('../views/EmbroideryView.vue') },
   { path: '/gallery', name: 'gallery', component: () => import('../views/GalleryView.vue') },
   { path: '/cart', name: 'cart', component: () => import('../views/CartView.vue') },
@@ -33,6 +34,7 @@ const routes = [
       { path: 'subscriptions', name: 'admin-subscriptions', component: () => import('../views/admin/AdminSubscriptionsView.vue') },
       { path: 'coupons', name: 'admin-coupons', component: () => import('../views/admin/AdminCouponsView.vue') },
       { path: 'settings', name: 'admin-settings', component: () => import('../views/admin/AdminSettingsView.vue') },
+      { path: 'appointments', name: 'admin-appointments', component: () => import('../views/admin/AdminAppointmentsView.vue') },
     ]
   }
 ]

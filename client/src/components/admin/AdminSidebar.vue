@@ -50,7 +50,8 @@ import {
   Ticket as CouponsIcon, 
   Settings as SettingsIcon,
   LogOut as LogOutIcon,
-  X as XIcon
+  X as XIcon,
+  Calendar as CalendarIcon
 } from 'lucide-vue-next'
 
 const router = useRouter()
@@ -71,6 +72,7 @@ const navItems = [
   { name: 'Custom Stitching', path: '/admin/custom-orders', icon: CustomOrdersIcon },
   { name: 'Embroidery Gallery', path: '/admin/embroidery', icon: EmbroideryIcon },
   { name: 'Embroidery Orders', path: '/admin/embroidery-submissions', icon: EmbroideryIcon },
+  { name: 'Bridal Bookings', path: '/admin/appointments', icon: CalendarIcon },
   { name: 'Users', path: '/admin/users', icon: UsersIcon },
   { name: 'Settings', path: '/admin/settings', icon: SettingsIcon },
 ]

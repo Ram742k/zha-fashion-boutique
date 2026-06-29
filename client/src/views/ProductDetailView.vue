@@ -58,8 +58,8 @@
                 <BagIcon :size="18" />
                 <span>Add to Shopping Bag</span>
               </button>
-              <button class="btn-outline !px-6 py-5 hover:bg-beige-light">
-                <HeartIcon :size="20" />
+              <button @click="toggleWishlist" class="btn-outline !px-6 py-5 hover:bg-beige-light">
+                <HeartIcon :size="20" :class="{'fill-gold text-gold': isInWishlist}" />
               </button>
             </div>
 
@@ -75,7 +75,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { useCartStore } from '../store'
@@ -127,4 +127,18 @@ const addToBag = () => {
     })
     alert('Added to your shopping bag!')
 }
+
+const toggleWishlist = () => {
+    cartStore.toggleWishlist({
+        id: product.value._id,
+        name: product.value.name,
+        price: product.value.sale_price || product.value.price,
+        image: product.value.images[0] || '/assets/placeholder.png',
+        category: product.value.category
+    })
+}
+
+const isInWishlist = computed(() => {
+    return cartStore.wishlist.some(i => i.id === product.value._id)
+})
 </script>

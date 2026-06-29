@@ -4,11 +4,11 @@
     <nav v-if="!isAdmin" class="glass sticky top-0 z-50 border-b border-beige/30 transition-all duration-500">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-20 items-center">
-          <div class="flex-shrink-0 flex items-center space-x-3">
-            <img src="/assets/logo.png" class="w-12 h-12 object-contain hover:rotate-[360deg] transition-transform duration-1000" alt="ZHA Fashion Logo" />
+          <div class="flex-shrink-0 flex items-center space-x-2 md:space-x-3">
+            <img src="/assets/logo.png" class="w-10 h-10 md:w-12 md:h-12 object-contain hover:rotate-[360deg] transition-transform duration-1000" alt="ZHA Fashion Logo" />
             <router-link to="/" class="flex flex-col group">
-              <span class="text-xl font-playfair font-bold tracking-widest text-brand-gold leading-tight group-hover:text-brand-purple transition-colors duration-500">ZHA FASHION</span>
-              <span class="text-[9px] font-inter font-bold tracking-[0.3em] text-brand-purple group-hover:text-brand-rose transition-colors duration-500">STUDIO</span>
+              <span class="text-base md:text-xl font-playfair font-bold tracking-widest text-brand-gold leading-tight group-hover:text-brand-purple transition-colors duration-500">ZHA FASHION</span>
+              <span class="text-[8px] md:text-[9px] font-inter font-bold tracking-[0.3em] text-brand-purple group-hover:text-brand-rose transition-colors duration-500">STUDIO</span>
             </router-link>
           </div>
           
@@ -36,7 +36,11 @@
             </router-link>
           </div>
 
-          <div class="flex items-center space-x-6">
+          <div class="flex items-center space-x-2.5 md:space-x-6">
+            <!-- Mobile Hamburger Trigger -->
+            <button @click="showMobileMenu = !showMobileMenu" class="md:hidden text-brand-navy hover:text-brand-gold transition-colors" aria-label="Toggle Menu">
+              <MenuIcon :size="18" stroke-width="2.5" />
+            </button>
             <button @click="showSearch = !showSearch" class="text-brand-navy hover:text-brand-gold transition-colors">
               <SearchIcon :size="18" stroke-width="2.5" />
             </button>
@@ -54,6 +58,45 @@
         </div>
       </div>
     </nav>
+    
+    <!-- Mobile Navigation Drawer -->
+    <div v-show="showMobileMenu" class="fixed inset-0 z-50 md:hidden bg-brand-navy/60 backdrop-blur-sm" @click="showMobileMenu = false">
+      <div class="w-64 bg-white h-full p-8 flex flex-col justify-between shadow-2xl relative" @click.stop>
+        <div>
+          <div class="flex justify-between items-center mb-12 border-b border-beige pb-4">
+             <span class="font-playfair font-bold text-brand-gold tracking-widest text-base">ZHA STUDIO</span>
+             <button @click="showMobileMenu = false" class="text-brand-navy hover:text-brand-gold">
+                <XIcon :size="20" />
+             </button>
+          </div>
+          <nav class="flex flex-col space-y-6 text-xs uppercase tracking-widest font-bold text-brand-navy">
+            <router-link to="/" @click="showMobileMenu = false" class="hover:text-brand-gold transition-colors py-2">Home</router-link>
+            <router-link to="/shop" @click="showMobileMenu = false" class="hover:text-brand-gold transition-colors py-2">Shop</router-link>
+            <router-link to="/custom-stitching" @click="showMobileMenu = false" class="hover:text-brand-purple transition-colors py-2 text-brand-purple">Custom Stitching</router-link>
+            <router-link to="/embroidery" @click="showMobileMenu = false" class="hover:text-brand-gold transition-colors py-2">Embroidery</router-link>
+            <router-link to="/gallery" @click="showMobileMenu = false" class="hover:text-brand-gold transition-colors py-2">Gallery</router-link>
+          </nav>
+        </div>
+        <div class="border-t border-beige pt-6 text-[9px] uppercase tracking-widest text-gray-400 font-bold">
+          &copy; 2026 Zha Studio
+        </div>
+      </div>
+    </div>
+    
+    <!-- Search Overlay -->
+    <div v-show="showSearch" class="bg-brand-navy text-white py-6 border-b border-brand-gold/20 animate-fade-in relative z-40">
+      <div class="max-w-3xl mx-auto px-4 flex items-center space-x-4">
+        <SearchIcon :size="20" class="text-brand-gold" />
+        <input 
+          v-model="searchQuery" 
+          @keyup.enter="handleSearchSubmit" 
+          type="text" 
+          placeholder="Search for sarees, lehengas, custom fabrics..." 
+          class="bg-transparent border-none outline-none text-white text-base w-full placeholder:text-white/30 font-inter py-2"
+        />
+        <button @click="showSearch = false" class="text-xs uppercase tracking-widest text-brand-rose hover:text-white transition-colors">Close</button>
+      </div>
+    </div>
 
     <!-- Content -->
     <main class="flex-grow">
@@ -123,7 +166,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useCartStore } from './store'
 import { 
   Search as SearchIcon, 
@@ -131,14 +174,27 @@ import {
   User as UserIcon,
   Instagram as InstagramIcon,
   Facebook as FacebookIcon,
-  Twitter as TwitterIcon
+  Twitter as TwitterIcon,
+  Menu as MenuIcon,
+  X as XIcon
 } from 'lucide-vue-next'
 
 const route = useRoute()
+const router = useRouter()
 const cartStore = useCartStore()
 
 const showSearch = ref(false)
+const showMobileMenu = ref(false)
+const searchQuery = ref('')
 const cartCount = computed(() => cartStore.totalItems)
+
+const handleSearchSubmit = () => {
+  if (searchQuery.value.trim()) {
+    router.push({ path: '/shop', query: { q: searchQuery.value } })
+    showSearch.value = false
+    searchQuery.value = ''
+  }
+}
 
 const isAdmin = computed(() => route.path.startsWith('/admin'))
 </script>

@@ -463,4 +463,53 @@ router.post('/settings', upload.single('logo_file'), async (req, res) => {
   }
 });
 
+const Appointment = require('../models/Appointment');
+
+// GET /api/admin/appointments
+router.get('/appointments', async (req, res) => {
+  try {
+    const appointments = await Appointment.find().populate('user').sort({ createdAt: -1 });
+    res.json(appointments);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// PATCH /api/admin/appointments/:id/status
+router.patch('/appointments/:id/status', async (req, res) => {
+  try {
+    const { status } = req.body;
+    const appointment = await Appointment.findByIdAndUpdate(
+      req.params.id,
+      { status },
+      { new: true }
+    );
+    if (!appointment) return res.status(404).json({ message: 'Appointment not found' });
+    res.json(appointment);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
+// PATCH /api/admin/appointments/:id/designer
+router.patch('/appointments/:id/designer', async (req, res) => {
+  try {
+    const { preferred_designer, notes, assigned_staff } = req.body;
+    const updateData = {};
+    if (preferred_designer !== undefined) updateData.preferred_designer = preferred_designer;
+    if (assigned_staff !== undefined) updateData.assigned_staff = assigned_staff;
+    if (notes !== undefined) updateData.notes = notes;
+
+    const appointment = await Appointment.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true }
+    );
+    if (!appointment) return res.status(404).json({ message: 'Appointment not found' });
+    res.json(appointment);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
+
 module.exports = router;

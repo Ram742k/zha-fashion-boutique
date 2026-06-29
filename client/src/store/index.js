@@ -3,8 +3,8 @@ import axios from 'axios'
 
 export const useCartStore = defineStore('cart', {
   state: () => ({
-    items: [],
-    wishlist: [],
+    items: JSON.parse(localStorage.getItem('cart') || '[]'),
+    wishlist: JSON.parse(localStorage.getItem('wishlist') || '[]'),
     coupon: null,
   }),
   getters: {
@@ -25,15 +25,27 @@ export const useCartStore = defineStore('cart', {
       } else {
         this.items.push({ ...product, quantity, variant })
       }
+      localStorage.setItem('cart', JSON.stringify(this.items))
     },
     removeFromCart(productId, variant = null) {
       this.items = this.items.filter(i => !(i.id === productId && JSON.stringify(i.variant) === JSON.stringify(variant)))
+      localStorage.setItem('cart', JSON.stringify(this.items))
     },
     updateQuantity(productId, quantity, variant = null) {
         const item = this.items.find(i => i.id === productId && JSON.stringify(i.variant) === JSON.stringify(variant))
         if (item) {
             item.quantity = Math.max(1, quantity)
         }
+        localStorage.setItem('cart', JSON.stringify(this.items))
+    },
+    toggleWishlist(product) {
+      const idx = this.wishlist.findIndex(i => i.id === product.id)
+      if (idx > -1) {
+        this.wishlist.splice(idx, 1)
+      } else {
+        this.wishlist.push(product)
+      }
+      localStorage.setItem('wishlist', JSON.stringify(this.wishlist))
     },
     applyCoupon(coupon) {
       this.coupon = coupon
@@ -41,6 +53,7 @@ export const useCartStore = defineStore('cart', {
     clearCart() {
         this.items = []
         this.coupon = null
+        localStorage.removeItem('cart')
     }
   }
 })
