@@ -24,13 +24,13 @@
 
 <script setup>
 const galleryItems = [
-    { id: 1, image: 'https://images.unsplash.com/photo-1594465919760-442ef5469af5?w=800', title: 'The Royal Velvet Set', tag: 'Handmade' },
-    { id: 2, image: 'https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=800', title: 'Golden Threads', tag: 'Embroidery' },
-    { id: 3, image: 'https://images.unsplash.com/photo-1610030467222-38d0696eb8038c?w=1000', title: 'Ivory Chiffon Whisper', tag: 'Boutique' },
-    { id: 4, image: 'https://images.unsplash.com/photo-1581044777550-4cfa60707c03?w=800', title: 'Peacock Motifs', tag: 'Aari Work' },
-    { id: 5, image: 'https://images.unsplash.com/photo-1598507045484-9ca950dc9670?w=600', title: 'Zha Classics', tag: 'Premium' },
-    { id: 6, image: 'https://images.unsplash.com/photo-1594465919760-442ef5469af5?w=900', title: 'Summer Breeze Kurti', tag: 'Couture' },
-    { id: 7, image: 'https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=700', title: 'Regal Zari Work', tag: 'Luxury' },
-    { id: 8, image: 'https://images.unsplash.com/photo-1610030467222-38d0696eb8038c?w=900', title: 'Bridal Dream', tag: 'Signature' },
+    { id: 1, image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80', title: 'Kanchipuram Silk Elegance', tag: 'Kanchipuram Silk' },
+    { id: 2, image: 'https://images.unsplash.com/photo-1631857455684-a54a2f03665f?auto=format&fit=crop&w=800&q=80', title: 'Royal Bridal Heritage', tag: 'Bridal Wear' },
+    { id: 3, image: 'https://images.unsplash.com/photo-1618244972963-dbee1a7edc95?auto=format&fit=crop&w=800&q=80', title: 'Temple Jewelry Portrait', tag: 'Traditional' },
+    { id: 4, image: 'https://images.unsplash.com/photo-1605722243979-fe0be8158232?auto=format&fit=crop&w=800&q=80', title: 'Zari Thread Weaving', tag: 'Craftsmanship' },
+    { id: 5, image: 'https://images.unsplash.com/photo-1608748010899-18f300247112?auto=format&fit=crop&w=800&q=80', title: 'Intricate Aari Detailing', tag: 'Aari Work' },
+    { id: 6, image: 'https://images.unsplash.com/photo-1581338834647-b0fb40704e21?auto=format&fit=crop&w=800&q=80', title: 'Heritage Velvet Work', tag: 'Embroidery' },
+    { id: 7, image: 'https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&w=800&q=80', title: 'Classic Ethnic Silhouette', tag: 'Signature' },
+    { id: 8, image: 'https://images.unsplash.com/photo-1596783074918-c84cb06531ca?auto=format&fit=crop&w=800&q=80', title: 'Royal Emerald Saree', tag: 'Luxury Silk' },
 ]
 </script>
