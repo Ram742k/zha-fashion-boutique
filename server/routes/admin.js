@@ -57,7 +57,7 @@ router.patch('/orders/:id/status', async (req, res) => {
 });
 
 router.get('/custom-orders', async (req, res) => {
-  const orders = await CustomOrder.find().populate('user').sort({ createdAt: -1 });
+  const orders = await CustomOrder.find().populate('user').populate('assigned_tailor').sort({ createdAt: -1 });
   res.json(orders.map(o => ({
     ...o.toObject(),
     id: o._id,
@@ -77,9 +77,32 @@ router.patch('/custom-orders/:id/status', async (req, res) => {
   res.json(order);
 });
 
+router.patch('/custom-orders/:id/tailor', async (req, res) => {
+  const { assigned_tailor, admin_notes } = req.body;
+  const order = await CustomOrder.findByIdAndUpdate(req.params.id, { assigned_tailor, admin_notes }, { new: true });
+  res.json(order);
+});
+
 router.get('/embroidery-submissions', async (req, res) => {
-  const orders = await EmbroideryOrder.find().populate('user').sort({ createdAt: -1 });
+  const orders = await EmbroideryOrder.find().populate('user').populate('assigned_designer').sort({ createdAt: -1 });
   res.json(orders);
+});
+
+router.patch('/embroidery-submissions/:id/designer', async (req, res) => {
+  const { assigned_designer, notes, price, status } = req.body;
+  const updateData = {};
+  if (assigned_designer !== undefined) updateData.assigned_designer = assigned_designer;
+  if (notes !== undefined) updateData.notes = notes;
+  if (price !== undefined) updateData.price = price;
+  if (status !== undefined) updateData.status = status;
+  
+  const order = await EmbroideryOrder.findByIdAndUpdate(req.params.id, updateData, { new: true });
+  res.json(order);
+});
+
+router.get('/staff', async (req, res) => {
+  const staff = await User.find({ role: { $ne: 'customer' } }).select('name email role');
+  res.json(staff);
 });
 
 const Portfolio = require('../models/Portfolio');

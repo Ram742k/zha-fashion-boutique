@@ -11,6 +11,7 @@ const embroideryOrderSchema = new mongoose.Schema({
   status: { type: String, default: 'pending' },
   notes: { type: String },
   price: { type: Number },
+  assigned_designer: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 }, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
 module.exports = mongoose.model('EmbroideryOrder', embroideryOrderSchema);

@@ -385,7 +385,7 @@ const performDelete = async () => {
 const exportItems = () => {
     exporting.value = true
     try {
-        window.location.href = `${API_BASE}/products/export`
+        window.location.href = `${axios.defaults.baseURL}${API_BASE}/products/export?token=${localStorage.getItem('token')}`
         setTimeout(() => { exporting.value = false }, 3000)
     } catch (error) {
         showNotification('Export failed', 'error')

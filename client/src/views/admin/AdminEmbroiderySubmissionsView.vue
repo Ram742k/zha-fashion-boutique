@@ -73,9 +73,48 @@
 
                     <h5 class="text-[10px] uppercase tracking-[0.3em] font-bold text-gray-400 border-b border-beige/10 pb-2 mt-8">Requirements</h5>
                     <p class="text-xs text-gray-600 leading-relaxed italic">"{{ selectedOrder.notes || 'No specific instructions provided.' }}"</p>
-                    <div class="pt-6 border-t border-beige/10">
-                        <p class="text-[9px] uppercase tracking-widest text-gray-400 font-bold mb-2">Quantity</p>
-                        <p class="text-lg font-bold text-brand-navy">{{ selectedOrder.quantity }} Units</p>
+                    <div class="pt-6 border-t border-beige/10 flex justify-between items-center">
+                        <div>
+                            <p class="text-[9px] uppercase tracking-widest text-gray-400 font-bold mb-2">Quantity</p>
+                            <p class="text-lg font-bold text-brand-navy">{{ selectedOrder.quantity }} Units</p>
+                        </div>
+                        <div>
+                            <p class="text-[9px] uppercase tracking-widest text-gray-400 font-bold mb-2">Current Status</p>
+                            <span class="px-2 py-1 bg-yellow-50 text-yellow-600 border border-yellow-100 text-[9px] uppercase font-bold">{{ selectedOrder.status }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Embroidery Management Fields -->
+                    <h5 class="text-[10px] uppercase tracking-[0.3em] font-bold text-gray-400 border-b border-beige/10 pb-2 mt-8">Embroidery Assignment & Quote</h5>
+                    <div class="space-y-4 mt-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-[8px] uppercase tracking-[0.3em] font-bold text-gray-400 block mb-1">Quote Price (INR)</label>
+                                <input type="number" v-model="selectedOrder.price" class="w-full bg-beige-light border-none px-4 py-3 text-xs font-bold text-brand-navy focus:ring-1 ring-brand-gold outline-none" placeholder="Set Quote" />
+                            </div>
+                            <div>
+                                <label class="text-[8px] uppercase tracking-[0.3em] font-bold text-gray-400 block mb-1">Status</label>
+                                <select v-model="selectedOrder.status" class="w-full bg-beige-light border-none px-4 py-3 text-xs font-bold text-brand-navy focus:ring-1 ring-brand-gold outline-none uppercase">
+                                    <option value="pending">Pending</option>
+                                    <option value="approved">Approved</option>
+                                    <option value="stitching">Stitching</option>
+                                    <option value="ready">Ready</option>
+                                    <option value="delivered">Delivered</option>
+                                    <option value="cancelled">Cancelled</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <label class="text-[8px] uppercase tracking-[0.3em] font-bold text-gray-400 block">Assign Designer / Artist</label>
+                        <select v-model="selectedOrder.assigned_designer" class="w-full bg-beige-light border-none px-4 py-3 text-xs font-bold text-brand-navy focus:ring-1 ring-brand-gold outline-none">
+                            <option :value="null">Unassigned</option>
+                            <option v-for="member in staff" :key="member._id" :value="member._id">{{ member.name }} ({{ member.role }})</option>
+                        </select>
+                        
+                        <label class="text-[8px] uppercase tracking-[0.3em] font-bold text-gray-400 block">Designer Instructions</label>
+                        <textarea v-model="selectedOrder.notes" rows="3" class="w-full bg-beige-light border-none px-4 py-3 text-xs font-bold text-brand-navy focus:ring-1 ring-brand-gold outline-none resize-none" placeholder="Enter instructions..."></textarea>
+                        
+                        <button type="button" @click="saveDesignerAssignment" class="btn-gold !text-[9px] !px-6 !py-3 w-full">Update Embroidery Order</button>
                     </div>
                 </div>
             </div>
@@ -96,10 +135,14 @@ import {
 const API_BASE = '/admin/embroidery-submissions'
 
 const orders = ref([])
+const staff = ref([])
 const loading = ref(true)
 const selectedOrder = ref(null)
 
-onMounted(() => fetchOrders())
+onMounted(async () => {
+    await fetchOrders()
+    await fetchStaff()
+})
 
 const fetchOrders = async () => {
     loading.value = true
@@ -110,6 +153,33 @@ const fetchOrders = async () => {
         console.error('Data pull failed')
     } finally {
         loading.value = false
+    }
+}
+
+const fetchStaff = async () => {
+    try {
+        const response = await axios.get('/admin/staff')
+        staff.value = response.data
+    } catch (error) {
+        console.error('Failed to load staff list')
+    }
+}
+
+const saveDesignerAssignment = async () => {
+    try {
+        const designerId = selectedOrder.value.assigned_designer?._id || selectedOrder.value.assigned_designer || null
+        await axios.patch(`/admin/embroidery-submissions/${selectedOrder.value._id}/designer`, {
+            assigned_designer: designerId,
+            notes: selectedOrder.value.notes,
+            price: selectedOrder.value.price,
+            status: selectedOrder.value.status
+        })
+        alert('Embroidery order updated successfully!')
+        await fetchOrders()
+        selectedOrder.value = null
+    } catch (error) {
+        console.error(error)
+        alert('Failed to update embroidery order')
     }
 }
 </script>

@@ -6,6 +6,7 @@ const adminMiddleware = require('../middleware/adminMiddleware');
 const upload = require('../middleware/upload');
 
 router.get('/', productController.getProducts);
+router.get('/export', authMiddleware, adminMiddleware, productController.exportProducts);
 router.get('/:slug', productController.getProduct);
 
 // Admin only

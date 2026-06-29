@@ -81,3 +81,23 @@ exports.deleteProduct = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+exports.exportProducts = async (req, res) => {
+  try {
+    const products = await Product.find().populate('category_id');
+    
+    let csv = 'Product Name,Category,Price,Sale Price,Stock,Description,Status,Featured\n';
+    for (const p of products) {
+      const name = `"${(p.name || '').replace(/"/g, '""')}"`;
+      const cat = `"${(p.category_id?.name || 'Uncategorized').replace(/"/g, '""')}"`;
+      const desc = `"${(p.description || '').replace(/"/g, '""')}"`;
+      csv += `${name},${cat},${p.price},${p.sale_price || 0},${p.stock},${desc},${p.status ? 'Live' : 'Hidden'},${p.is_featured ? 'Yes' : 'No'}\n`;
+    }
+    
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', 'attachment; filename=products_export.csv');
+    res.status(200).send(csv);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

@@ -12,11 +12,15 @@ const path = require('path');
 
 const app = express();
 
+const rateLimiter = require('./middleware/rateLimiter');
+
 // Global Debug Logger
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
   next();
 });
+
+app.use('/api', rateLimiter);
 
 // Middleware
 app.use(cors({
@@ -109,6 +113,18 @@ async function startServer() {
 
     await mongoose.connect(process.env.MONGO_URI, MONGO_OPTIONS);
     console.log("✅ Successfully Connected to MongoDB");
+
+    // Setup Mongoose Compound Indexes for High-Performance Queries
+    const Product = require('./models/Product');
+    const User = require('./models/User');
+    const Order = require('./models/Order');
+    
+    await Product.collection.createIndex({ name: 'text', description: 'text' }).catch(() => {});
+    await Product.collection.createIndex({ slug: 1 }, { unique: true }).catch(() => {});
+    await User.collection.createIndex({ email: 1 }, { unique: true }).catch(() => {});
+    await Order.collection.createIndex({ order_number: 1 }, { unique: true }).catch(() => {});
+    await Order.collection.createIndex({ user: 1 }).catch(() => {});
+    console.log("⚡ MongoDB Indexes verified and created successfully");
 
     mongoose.connection.on('disconnected', () => {
       console.warn('⚠️ MongoDB Disconnected. Checking network...');

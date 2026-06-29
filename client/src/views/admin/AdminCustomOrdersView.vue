@@ -87,7 +87,22 @@
                     <p class="text-xs text-gray-400">{{ selectedOrder.user?.phone || 'No phone provided' }}</p>
                     
                     <h5 class="text-[10px] uppercase tracking-[0.3em] font-bold text-gray-400 border-b border-beige/10 pb-2 mt-8">Requirements</h5>
-                    <p class="text-xs text-gray-600 leading-relaxed italic">"{{ selectedOrder.requirements || 'No specific instructions provided.' }}"</p>
+                    <p class="text-xs text-gray-600 leading-relaxed italic mb-8">"{{ selectedOrder.requirements || 'No specific instructions provided.' }}"</p>
+
+                    <!-- Tailor Assignment -->
+                    <h5 class="text-[10px] uppercase tracking-[0.3em] font-bold text-gray-400 border-b border-beige/10 pb-2 mt-8">Tailoring Assignment</h5>
+                    <div class="space-y-4 mt-4">
+                        <label class="text-[8px] uppercase tracking-[0.3em] font-bold text-gray-400 block">Assign Tailor / Staff</label>
+                        <select v-model="selectedOrder.assigned_tailor" class="w-full bg-beige-light border-none px-4 py-3 text-xs font-bold text-brand-navy focus:ring-1 ring-brand-gold outline-none">
+                            <option :value="null">Unassigned</option>
+                            <option v-for="member in staff" :key="member._id" :value="member._id">{{ member.name }} ({{ member.role }})</option>
+                        </select>
+                        
+                        <label class="text-[8px] uppercase tracking-[0.3em] font-bold text-gray-400 block mt-4">Admin Instructions</label>
+                        <textarea v-model="selectedOrder.admin_notes" rows="3" class="w-full bg-beige-light border-none px-4 py-3 text-xs font-bold text-brand-navy focus:ring-1 ring-brand-gold outline-none resize-none" placeholder="Enter stitching instructions..."></textarea>
+                        
+                        <button type="button" @click="saveTailorAssignment" class="btn-gold !text-[9px] !px-6 !py-3 w-full">Save Assignment Details</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -108,10 +123,14 @@ import {
 const API_BASE = '/admin/custom-orders'
 
 const orders = ref([])
+const staff = ref([])
 const loading = ref(true)
 const selectedOrder = ref(null)
 
-onMounted(() => fetchOrders())
+onMounted(async () => {
+    await fetchOrders()
+    await fetchStaff()
+})
 
 const fetchOrders = async () => {
     loading.value = true
@@ -122,6 +141,15 @@ const fetchOrders = async () => {
         console.error('Data pull failed')
     } finally {
         loading.value = false
+    }
+}
+
+const fetchStaff = async () => {
+    try {
+        const response = await axios.get('/admin/staff')
+        staff.value = response.data
+    } catch (error) {
+        console.error('Failed to load staff list')
     }
 }
 
@@ -139,6 +167,22 @@ const updateStatus = async (order) => {
         await axios.patch(`${API_BASE}/${order.id}/status`, { status: order.status })
     } catch (error) {
         console.error('Status sync failure')
+    }
+}
+
+const saveTailorAssignment = async () => {
+    try {
+        const tailorId = selectedOrder.value.assigned_tailor?._id || selectedOrder.value.assigned_tailor || null
+        await axios.patch(`/admin/custom-orders/${selectedOrder.value.id}/tailor`, {
+            assigned_tailor: tailorId,
+            admin_notes: selectedOrder.value.admin_notes
+        })
+        alert('Tailor assignment details updated!')
+        await fetchOrders()
+        selectedOrder.value = null
+    } catch (error) {
+        console.error(error)
+        alert('Failed to save tailor details')
     }
 }
 </script>

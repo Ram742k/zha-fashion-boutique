@@ -11,6 +11,7 @@ const customOrderSchema = new mongoose.Schema({
   price_estimate: { type: Number },
   final_price: { type: Number },
   admin_notes: { type: String },
+  assigned_tailor: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
 }, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
 module.exports = mongoose.model('CustomOrder', customOrderSchema);
