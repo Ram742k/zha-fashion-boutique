@@ -155,7 +155,7 @@ onMounted(async () => {
 })
 
 const downloadInvoice = (orderId) => {
-    window.open(`${axios.defaults.baseURL}/orders/${orderId}/invoice`, '_blank')
+    window.open(`${axios.defaults.baseURL}/orders/${orderId}/invoice?token=${localStorage.getItem('token')}`, '_blank')
 }
 </script>
 

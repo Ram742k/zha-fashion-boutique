@@ -183,7 +183,7 @@ const updateStatus = async (order) => {
 
 const viewDetails = (order) => { selectedOrder.value = order }
 const downloadInvoice = (order) => {
-    window.open(`${API_BASE}/orders/${order.id}/invoice`, '_blank')
+    window.open(`${axios.defaults.baseURL}${API_BASE}/orders/${order.id}/invoice?token=${localStorage.getItem('token')}`, '_blank')
 }
 
 const formatPrice = (price) => parseFloat(price).toLocaleString('en-IN', { maximumFractionDigits: 0 })

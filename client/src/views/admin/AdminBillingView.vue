@@ -109,7 +109,7 @@ const totalRevenue = computed(() => {
 })
 
 const downloadInvoice = (orderId) => {
-    window.open(`${API_BASE}/${orderId}/invoice`, '_blank')
+    window.open(`${axios.defaults.baseURL}${API_BASE}/${orderId}/invoice?token=${localStorage.getItem('token')}`, '_blank')
 }
 
 const formatPrice = (price) => parseFloat(price).toLocaleString('en-IN', { maximumFractionDigits: 0 })

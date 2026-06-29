@@ -63,7 +63,7 @@
     <div class="bg-white border border-beige/30 overflow-hidden shadow-sm">
         <div class="p-8 border-b border-beige/20 flex flex-col sm:flex-row justify-between items-center gap-4">
             <h3 class="text-xl font-playfair font-bold text-brand-navy uppercase tracking-widest">Recent Orders</h3>
-            <button class="text-[10px] uppercase tracking-widest text-brand-gold font-bold hover:text-brand-purple transition-colors">Manage All Records</button>
+            <router-link to="/admin/orders" class="text-[10px] uppercase tracking-widest text-brand-gold font-bold hover:text-brand-purple transition-colors">Manage All Records</router-link>
         </div>
         <div class="overflow-x-auto">
           <table class="w-full text-left min-w-[800px]">
@@ -85,7 +85,7 @@
                         <span class="px-3 py-1 bg-green-50 text-green-600 text-[9px] font-bold border border-green-100 italic">{{ order.status }}</span>
                     </td>
                     <td class="px-8 py-6 text-right">
-                        <button class="text-brand-navy hover:text-brand-gold transition-colors font-bold border border-beige/10 px-4 py-2 bg-white">Update</button>
+                        <router-link to="/admin/orders" class="inline-block text-brand-navy hover:text-brand-gold transition-colors font-bold border border-beige/10 px-4 py-2 bg-white text-center">Update</router-link>
                     </td>
                 </tr>
             </tbody>

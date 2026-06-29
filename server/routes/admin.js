@@ -5,6 +5,8 @@ const Product = require('../models/Product');
 const Order = require('../models/Order');
 const CustomOrder = require('../models/CustomOrder');
 const EmbroideryOrder = require('../models/EmbroideryOrder');
+const Setting = require('../models/Setting');
+const upload = require('../middleware/upload');
 const authMiddleware = require('../middleware/authMiddleware');
 const adminMiddleware = require('../middleware/adminMiddleware');
 
@@ -405,6 +407,59 @@ router.get('/orders/:id/invoice', async (req, res) => {
     res.send(html);
   } catch (error) {
     res.status(500).send(`<h1>Server Error: ${error.message}</h1>`);
+  }
+});
+
+router.get('/settings', async (req, res) => {
+  try {
+    const dbSettings = await Setting.find();
+    const config = {
+      store_name: 'Zha Fashion Studio',
+      currency: 'INR',
+      razorpay_key: '',
+      razorpay_secret: '',
+      logo_url: ''
+    };
+    
+    dbSettings.forEach(s => {
+      config[s.key] = s.value;
+    });
+    
+    res.json(config);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+router.post('/settings', upload.single('logo_file'), async (req, res) => {
+  try {
+    const keys = ['store_name', 'currency', 'razorpay_key', 'razorpay_secret'];
+    
+    for (const key of keys) {
+      if (req.body[key] !== undefined) {
+        await Setting.findOneAndUpdate(
+          { key },
+          { value: req.body[key] },
+          { upsert: true, new: true }
+        );
+      }
+    }
+    
+    if (req.file) {
+      const protocol = req.protocol;
+      const host = req.get('host');
+      const logoUrl = `${protocol}://${host}/uploads/products/${req.file.filename}`;
+      
+      await Setting.findOneAndUpdate(
+        { key: 'logo_url' },
+        { value: logoUrl },
+        { upsert: true, new: true }
+      );
+    }
+    
+    res.json({ message: 'Settings saved successfully' });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
 
