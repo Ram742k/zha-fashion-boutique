@@ -85,7 +85,7 @@ import {
     Loader as LoaderIcon
 } from 'lucide-vue-next'
 
-const API_BASE = 'https://zha-fashion-boutique.onrender.com/api/admin/categories'
+const API_BASE = '/admin/categories'
 
 const categories = ref([])
 const loading = ref(true)

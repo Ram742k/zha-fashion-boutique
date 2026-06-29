@@ -55,9 +55,11 @@
 <script setup>
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '../store'
 import axios from 'axios'
 
 const router = useRouter()
+const authStore = useAuthStore()
 const loading = ref(false)
 const error = ref('')
 
@@ -71,11 +73,11 @@ const handleLogin = async () => {
   error.value = ''
   
   try {
-    const response = await axios.post('https://zha-fashion-boutique.onrender.com/api/auth/login', form)
+    const response = await axios.post('/auth/login', form)
     const { access_token, user } = response.data
     
-    localStorage.setItem('token', access_token)
     localStorage.setItem('user', JSON.stringify(user))
+    authStore.setUser(user, access_token)
     
     // Set axios default header
     axios.defaults.headers.common['Authorization'] = `Bearer ${access_token}`

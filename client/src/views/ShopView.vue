@@ -33,26 +33,26 @@
 
       <!-- Product Grid -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-16">
-        <div v-for="product in filteredProducts" :key="product.id" class="group animate-fade-in relative">
+        <div v-for="product in filteredProducts" :key="product.id" class="group animate-fade-in relative p-4 border border-transparent hover:border-beige/40 hover:bg-white hover:shadow-premium transition-all duration-700">
           <!-- Wishlist button -->
-          <button class="absolute top-4 right-4 z-10 p-2 bg-white/80 rounded-full text-gold opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white shadow-sm">
-            <HeartIcon :size="16" />
+          <button class="absolute top-6 right-6 z-10 p-2 bg-white/90 rounded-full text-gold opacity-0 group-hover:opacity-100 transition-all duration-500 hover:scale-110 hover:bg-white shadow-md">
+            <HeartIcon :size="15" />
           </button>
 
           <router-link :to="'/product/' + product.slug" class="block">
-            <div class="aspect-[4/5] bg-beige-light overflow-hidden relative mb-6">
-              <img :src="product.image" :alt="product.name" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+            <div class="aspect-[4/5] bg-beige-light overflow-hidden relative mb-6 double-frame">
+              <img :src="product.image" :alt="product.name" class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
               <!-- Hover effect buttons -->
-              <div class="absolute bottom-0 left-0 right-0 p-4 bg-white/20 backdrop-blur-md translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                <button class="w-full bg-luxury-dark text-white py-3 text-[10px] uppercase tracking-widest font-bold hover:bg-gold transition-colors">Add to Bag</button>
+              <div class="absolute bottom-0 left-0 right-0 p-4 bg-white/10 backdrop-blur-md translate-y-full group-hover:translate-y-0 transition-transform duration-500">
+                <button class="w-full bg-luxury-dark text-white py-3 text-[9px] uppercase tracking-[0.25em] font-bold hover:bg-[#C9A227] hover:text-white transition-all duration-300">Add to Bag</button>
               </div>
             </div>
-            <div>
-              <span class="text-[9px] uppercase tracking-widest text-gold mb-2 block font-bold">{{ product.category }}</span>
-              <h3 class="text-md font-playfair font-medium text-luxury-dark mb-1 h-12 overflow-hidden">{{ product.name }}</h3>
-              <div class="flex items-center space-x-3">
-                 <span v-if="product.sale_price" class="text-xs line-through text-gray-400">₹{{ product.price.toLocaleString() }}</span>
-                 <span class="text-sm font-bold text-luxury-dark">₹{{ (product.sale_price || product.price).toLocaleString() }}</span>
+            <div class="px-2">
+              <span class="text-[8px] uppercase tracking-[0.2em] text-[#C9A227] mb-2 block font-bold">{{ product.category }}</span>
+              <h3 class="text-sm font-playfair font-semibold text-luxury-dark mb-2 h-10 overflow-hidden leading-snug group-hover:text-brand-purple transition-colors">{{ product.name }}</h3>
+              <div class="flex items-center space-x-3 pt-1">
+                 <span v-if="product.sale_price" class="text-xs line-through text-gray-400 font-inter">₹{{ product.price.toLocaleString() }}</span>
+                 <span class="text-xs font-bold text-luxury-dark tracking-widest font-inter">₹{{ (product.sale_price || product.price).toLocaleString() }}</span>
               </div>
             </div>
           </router-link>
@@ -84,10 +84,10 @@ const products = ref([])
 
 onMounted(async () => {
     try {
-        const catRes = await axios.get('https://zha-fashion-boutique.onrender.com/api/categories')
+        const catRes = await axios.get('/categories')
         categories.value = ['All Collection', ...catRes.data.map(c => c.name)]
         
-        const prodRes = await axios.get('https://zha-fashion-boutique.onrender.com/api/products')
+        const prodRes = await axios.get('/products')
         products.value = prodRes.data.map(p => ({
             id: p._id,
             name: p.name,

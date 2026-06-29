@@ -172,6 +172,46 @@
       </div>
     </section>
 
+    <!-- Testimonials Section -->
+    <section class="py-32 bg-white relative border-t border-brand-gold/10">
+      <div class="max-w-4xl mx-auto px-4 text-center">
+        <div class="reveal reveal-up">
+          <span class="text-brand-gold uppercase tracking-[0.4em] text-[10px] font-bold mb-6 block font-inter">Voices of Elegance</span>
+          <h2 class="text-4xl md:text-5xl font-playfair font-bold text-brand-navy italic mb-16">What Our Muse Says</h2>
+        </div>
+
+        <div class="relative min-h-[200px] flex flex-col justify-center items-center px-4 md:px-12 reveal reveal-up" style="transition-delay: 0.2s">
+          <!-- Quote Icon -->
+          <span class="text-brand-gold/10 font-playfair text-[10rem] absolute -top-24 left-4 pointer-events-none select-none">“</span>
+          
+          <!-- Slider Content -->
+          <div class="transition-all duration-700 ease-in-out" v-for="(testimonial, idx) in testimonials" :key="idx" v-show="activeTestimonial === idx">
+            <p class="text-lg md:text-xl font-playfair font-medium text-brand-navy leading-relaxed italic mb-8">
+              "{{ testimonial.text }}"
+            </p>
+            <div>
+              <p class="text-[10px] uppercase tracking-[0.2em] font-bold text-brand-gold font-inter mb-1">{{ testimonial.author }}</p>
+              <p class="text-[8px] uppercase tracking-widest text-gray-400 font-bold font-inter">{{ testimonial.role }}</p>
+            </div>
+          </div>
+
+          <span class="text-brand-gold/10 font-playfair text-[10rem] absolute -bottom-36 right-4 pointer-events-none select-none">”</span>
+        </div>
+
+        <!-- Slider Controls -->
+        <div class="flex justify-center space-x-3 mt-12 reveal reveal-up" style="transition-delay: 0.3s">
+          <button 
+            v-for="(t, idx) in testimonials" 
+            :key="idx" 
+            @click="activeTestimonial = idx" 
+            class="h-1 transition-all duration-500 rounded-full"
+            :class="activeTestimonial === idx ? 'w-8 bg-brand-gold' : 'w-2 bg-beige-dark hover:bg-brand-gold/50'"
+            :aria-label="'Go to slide ' + (idx + 1)"
+          ></button>
+        </div>
+      </div>
+    </section>
+
     <!-- CTA Section -->
     <section class="py-40 relative text-center bg-white overflow-hidden">
       <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-brand-rose/5 rounded-full blur-[120px] pointer-events-none"></div>
@@ -189,7 +229,8 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick } from 'vue'
+import axios from 'axios'
 import { 
   Scissors as ScissorsIcon, 
   Palette as PaletteIcon, 
@@ -226,32 +267,60 @@ const services = [
 const featuredProducts = ref([])
 const loading = ref(true)
 
+// Testimonial slider state
+const activeTestimonial = ref(0)
+const testimonials = [
+  {
+    text: "The custom stitching on my bridal lehenga was absolutely flawless. The fit was like a second skin, and the intricate Zardosi work drew compliments all night. Truly an elite couture experience.",
+    author: "Priya Ramachandran",
+    role: "Bridal Couture Client"
+  },
+  {
+    text: "ZHA Fashion has completely redefined luxury daily wear for me. The fabrics are hand-sourced silks of premium quality, and the attention to detail in every single seam is unmatched.",
+    author: "Anjali Krishnan",
+    role: "Couture Collector"
+  },
+  {
+    text: "Ordered a custom embroidery saree from Singapore, and their white-glove delivery was exceptional. The craftsmanship of their master designers is a heritage art form brought to life.",
+    author: "Meera DeVita",
+    role: "International Client"
+  }
+]
+
 onMounted(async () => {
+    // Reveal animations on scroll
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px'
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active')
+            }
+        })
+    }, observerOptions)
+
     try {
-        const response = await axios.get('https://zha-fashion-boutique.onrender.com/api/products')
+        const response = await axios.get('/products')
         // Take first 4 as arrivals for now
         featuredProducts.value = response.data.slice(0, 4)
+        nextTick(() => {
+            document.querySelectorAll('.reveal').forEach(el => observer.observe(el))
+        })
     } catch (error) {
-        console.error('Failed to load arrivals')
+        console.error('Failed to load arrivals', error)
     } finally {
         loading.value = false
     }
 
-    // Reveal animations on scroll
-  const observerOptions = {
-    threshold: 0.15,
-    rootMargin: '0px'
-  }
+    // Auto rotate testimonials
+    setInterval(() => {
+      activeTestimonial.value = (activeTestimonial.value + 1) % testimonials.length
+    }, 7000)
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('active')
-      }
-    })
-  }, observerOptions)
-
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el))
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el))
 })
 </script>
 

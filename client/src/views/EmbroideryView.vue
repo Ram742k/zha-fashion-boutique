@@ -123,7 +123,7 @@ const submitEmbroidery = async () => {
             type: form.type,
             notes: form.requirements
         }
-        await axios.post('https://zha-fashion-boutique.onrender.com/api/embroidery', payload)
+        await axios.post('/embroidery', payload)
         alert('Design submitted! Our team will get back to you with a quote.')
         router.push('/dashboard')
     } catch (error) {

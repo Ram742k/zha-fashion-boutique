@@ -124,6 +124,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { useCartStore } from './store'
 import { 
   Search as SearchIcon, 
   ShoppingBag as ShoppingBagIcon, 
@@ -134,8 +135,10 @@ import {
 } from 'lucide-vue-next'
 
 const route = useRoute()
+const cartStore = useCartStore()
+
 const showSearch = ref(false)
-const cartCount = ref(0)
+const cartCount = computed(() => cartStore.totalItems)
 
 const isAdmin = computed(() => route.path.startsWith('/admin'))
 </script>

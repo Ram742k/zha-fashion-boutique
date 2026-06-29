@@ -25,7 +25,10 @@
                     </div>
                     <div>
                       <p class="text-sm font-bold text-luxury-dark leading-tight">{{ item.name }}</p>
-                      <p class="text-[10px] text-gray-400 mt-1 uppercase tracking-widest">Size: {{ item.size }}</p>
+                      <div class="flex flex-col gap-1 mt-1 text-[9px] text-gray-400 uppercase tracking-widest">
+                        <span v-if="item.variant?.size">Size: {{ item.variant.size }}</span>
+                        <span v-if="item.variant?.color">Color: {{ item.variant.color }}</span>
+                      </div>
                     </div>
                   </td>
                   <td class="py-10">

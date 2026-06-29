@@ -102,13 +102,13 @@ const selectedColor = ref('')
 
 onMounted(async () => {
     try {
-        const response = await axios.get(`https://zha-fashion-boutique.onrender.com/api/products/${route.params.slug}`)
+        const response = await axios.get(`/products/${route.params.slug}`)
         product.value = response.data
         mainImage.value = product.value.images[0] || '/assets/placeholder.png'
         if (product.value.variants?.sizes?.length) selectedSize.value = product.value.variants.sizes[0]
         if (product.value.variants?.colors?.length) selectedColor.value = product.value.variants.colors[0]
     } catch (error) {
-        console.error('Failed to load product')
+        console.error('Failed to load product', error)
     } finally {
         loading.value = false
     }

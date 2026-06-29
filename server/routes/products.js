@@ -9,8 +9,8 @@ router.get('/', productController.getProducts);
 router.get('/:slug', productController.getProduct);
 
 // Admin only
-router.post('/', authMiddleware, adminMiddleware, upload.single('image_file'), productController.createProduct);
-router.put('/:id', authMiddleware, adminMiddleware, upload.single('image_file'), productController.updateProduct);
+router.post('/', authMiddleware, adminMiddleware, upload.any(), productController.createProduct);
+router.put('/:id', authMiddleware, adminMiddleware, upload.any(), productController.updateProduct);
 router.delete('/:id', authMiddleware, adminMiddleware, productController.deleteProduct);
 
 module.exports = router;

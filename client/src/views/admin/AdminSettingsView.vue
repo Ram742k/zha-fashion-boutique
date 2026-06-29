@@ -92,7 +92,7 @@ import {
     Image as ImageIcon
 } from 'lucide-vue-next'
 
-const API_BASE = 'https://zha-fashion-boutique.onrender.com/api/admin/settings'
+const API_BASE = '/admin/settings'
 
 const settings = ref({
     store_name: '',

@@ -126,19 +126,26 @@
                     </div>
 
                     <div class="space-y-4 md:col-span-2">
-                      <label class="text-[9px] uppercase tracking-[0.4em] font-bold text-gray-400 block">Product Image</label>
-                      <div class="flex items-center space-x-6 bg-beige-light p-6 border border-dashed border-beige/50">
-                          <div class="w-20 h-24 bg-white border border-beige shadow-sm overflow-hidden flex-shrink-0">
-                              <img v-if="previewImage" :src="previewImage" class="w-full h-full object-cover" />
-                              <div v-else class="w-full h-full flex items-center justify-center text-beige">
-                                  <ImageIcon :size="30" />
-                              </div>
-                          </div>
-                          <div class="flex-grow">
-                              <input type="file" @change="handleFileUpload" accept="image/*" class="hidden" ref="fileInput" />
-                              <button type="button" @click="$refs.fileInput.click()" class="btn-outline !text-[9px] !px-6 !py-2">Upload Image</button>
-                              <p class="text-[8px] text-gray-400 mt-2 italic">Allowed: JPG, PNG. Max: 2MB.</p>
-                          </div>
+                      <label class="text-[9px] uppercase tracking-[0.4em] font-bold text-gray-400 block">Product Images (Multiple)</label>
+                      <div class="bg-beige-light p-6 border border-dashed border-beige/50 space-y-6">
+                        <div class="flex flex-wrap gap-4">
+                            <!-- Thumbnail Previews -->
+                            <div v-for="(img, idx) in previewImages" :key="idx" class="w-20 h-24 bg-white border border-beige shadow-sm overflow-hidden relative group">
+                                <img :src="img" class="w-full h-full object-cover" />
+                                <button type="button" @click="removePreviewImage(idx)" class="absolute top-1 right-1 bg-red-500 text-white p-1 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <XIcon :size="10" />
+                                </button>
+                            </div>
+                            <!-- Empty State if no images selected -->
+                            <div v-if="previewImages.length === 0" class="w-20 h-24 bg-white border border-beige shadow-sm flex items-center justify-center text-beige">
+                                <ImageIcon :size="30" />
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-6">
+                            <input type="file" @change="handleFileUpload" accept="image/*" class="hidden" ref="fileInput" multiple />
+                            <button type="button" @click="$refs.fileInput.click()" class="btn-outline !text-[9px] !px-6 !py-2">Upload Images</button>
+                            <p class="text-[8px] text-gray-400 italic">Select one or more JPG, PNG files. Max 2MB each.</p>
+                        </div>
                       </div>
                     </div>
 
@@ -199,7 +206,7 @@ import {
   AlertTriangle as AlertTriangleIcon
 } from 'lucide-vue-next'
 
-const API_BASE = 'https://zha-fashion-boutique.onrender.com/api/admin'
+const API_BASE = '/admin'
 
 const products = ref([])
 const categories = ref([])
@@ -213,8 +220,8 @@ const isEditing = ref(false)
 const currentProductId = ref(null)
 const productToDelete = ref(null)
 const notification = ref(null)
-const previewImage = ref(null)
-const selectedFile = ref(null)
+const previewImages = ref([])
+const selectedFiles = ref([])
 
 const form = reactive({
   name: '',
@@ -255,11 +262,17 @@ const fetchCategories = async () => {
 }
 
 const handleFileUpload = (event) => {
-    const file = event.target.files[0]
-    if (file) {
-        selectedFile.value = file
-        previewImage.value = URL.createObjectURL(file)
+    const files = Array.from(event.target.files)
+    if (files.length > 0) {
+        selectedFiles.value = [...selectedFiles.value, ...files]
+        const urls = files.map(file => URL.createObjectURL(file))
+        previewImages.value = [...previewImages.value, ...urls]
     }
+}
+
+const removePreviewImage = (index) => {
+    selectedFiles.value.splice(index, 1)
+    previewImages.value.splice(index, 1)
 }
 
 const openAddModal = () => {
@@ -282,7 +295,8 @@ const editProduct = (product) => {
         is_featured: Boolean(product.is_featured),
         status: Boolean(product.status)
     })
-    previewImage.value = getImage(product)
+    previewImages.value = [...(product.images || [])]
+    selectedFiles.value = []
     showModal.value = true
 }
 
@@ -301,8 +315,8 @@ const resetForm = () => {
     form.images = []
     form.is_featured = false
     form.status = true
-    previewImage.value = null
-    selectedFile.value = null
+    previewImages.value = []
+    selectedFiles.value = []
     currentProductId.value = null
 }
 
@@ -320,8 +334,10 @@ const saveProduct = async () => {
     formData.append('is_featured', form.is_featured ? 1 : 0)
     formData.append('status', form.status ? 1 : 0)
     
-    if (selectedFile.value) {
-        formData.append('image_file', selectedFile.value)
+    if (selectedFiles.value.length > 0) {
+        selectedFiles.value.forEach(file => {
+            formData.append('image_files', file)
+        })
     }
 
     try {

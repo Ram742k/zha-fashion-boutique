@@ -105,7 +105,7 @@ import {
     ChevronRight as ArrowRightIcon
 } from 'lucide-vue-next'
 
-const API_BASE = 'https://zha-fashion-boutique.onrender.com/api/admin/custom-orders'
+const API_BASE = '/admin/custom-orders'
 
 const orders = ref([])
 const loading = ref(true)

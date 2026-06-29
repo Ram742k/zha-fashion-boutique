@@ -168,7 +168,7 @@ const submitOrder = async () => {
             notes: formData.notes,
             image: previewImage.value
         }
-        await axios.post('https://zha-fashion-boutique.onrender.com/api/custom-orders', payload)
+        await axios.post('/custom-orders', payload)
         alert('Order request submitted! Our designer will contact you shortly with a quote.')
         router.push('/dashboard')
     } catch (error) {

@@ -93,7 +93,7 @@ import {
     Loader as LoaderIcon
 } from 'lucide-vue-next'
 
-const API_BASE = 'https://zha-fashion-boutique.onrender.com/api/admin/embroidery-submissions'
+const API_BASE = '/admin/embroidery-submissions'
 
 const orders = ref([])
 const loading = ref(true)
